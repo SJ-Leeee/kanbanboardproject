@@ -9,6 +9,7 @@ class BoardService {
       const exBoard = await this.boardRepository.findBoardByName(boardName);
       // 같은 이름의 보드가 존재하는지 확인
       if (exBoard) throw new Error('이미 존재하는 이름입니다.');
+      // 커스텀에러 상속 에러객체를 상속받아 코드번호
 
       const newBoard = await this.boardRepository.registerBoard(userId, boardName, boardDesc, boardColor);
       // 보드 생성
