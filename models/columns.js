@@ -30,7 +30,7 @@ module.exports = (sequelize, DataTypes) => {
         type: Sequelize.INTEGER,
         allowNull: false,
       },
-      colmnName: {
+      columnName: {
         type: Sequelize.STRING,
         allowNull: false,
       },
