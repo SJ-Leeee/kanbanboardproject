@@ -11,8 +11,11 @@ class ColumnController {
       const createColumnData = await this.columnService.createColumn(boardId, columnName);
       res.status(201).json({ data: createColumnData });
     } catch (err) {
-      console.log(err);
-      res.status(500).json({ errorMessage: '컬럼 생성에 실패하였습니다.' });
+      if (err.message === 'NOT_FOUND_COLUMN_NAME') {
+        res.status(412).json({ errorMessage: '생성할 컬럼의 이름을 작성해주세요.' });
+      } else {
+        res.status(500).json({ errorMessage: '컬럼 생성에 실패하였습니다.' });
+      }
     }
   };
 
@@ -36,8 +39,11 @@ class ColumnController {
       const updateColumnData = await this.columnService.updateColumn(boardId, columnId, columnName);
       res.status(200).json({ message: `${columnName}으로 컬럼명이 변경되었습니다.`, data: updateColumnData });
     } catch (err) {
-      console.log(err);
-      res.status(500).json({ errorMessage: '컬럼명 수정에 실패하였습니다.' });
+      if (err.message === 'NOT_FOUND_COLUMN_NAME') {
+        res.status(412).json({ errorMessage: '변경할 컬럼명을 작성해주세요.' });
+      } else {
+        res.status(500).json({ errorMessage: '컬럼명 수정에 실패하였습니다.' });
+      }
     }
   };
 

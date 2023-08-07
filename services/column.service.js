@@ -5,6 +5,8 @@ class ColumnService {
 
   // 컬럼 생성 메서드
   createColumn = async (boardId, columnName) => {
+    // 예외처리
+    if (!columnName) throw new Error('NOT_FOUND_COLUMN_NAME');
     // 생성요청
     const createColumnData = await this.columnRepository.createColumn(boardId, columnName);
     // 반환값
@@ -39,6 +41,9 @@ class ColumnService {
 
   // 컬럼명 수정 메서드
   updateColumn = async (boardId, columnId, columnName) => {
+    // 예외처리
+    if (!columnName) throw new Error('NOT_FOUND_COLUMN_NAME');
+
     const updateColumnData = await this.columnRepository.updateColumn(boardId, columnId, columnName);
     // 반환값
     return {
