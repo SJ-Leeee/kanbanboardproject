@@ -1,0 +1,8 @@
+npx sequelize model:generate --name Users --attributes loginId:string,password:string,userName:string
+npx sequelize model:generate --name Boards --attributes userId:integer,boardName:string,boardDesc:string,boardColor:string
+npx sequelize model:generate --name Columns --attributes boardId:integer,colmnName:string
+npx sequelize model:generate --name Cards --attributes columnId:integer,assignee:integer,cardName:string,cardDesc:string,cardColor:string,dueDate:date
+npx sequelize model:generate --name Comments --attributes cardId:integer,userId:integer,commentText:string
+npx sequelize model:generate --name InviteUsers --attributes userId:integer,boardId:integer
+
+npx sequelize model:generate --name Cart_detail_option --attributes item_id:integer,cart_id:integer,option_id:integer
