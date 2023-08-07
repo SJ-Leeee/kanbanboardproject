@@ -18,11 +18,18 @@ class AuthenticationMiddleware {
       const decodedToken = jwt.verify(accessToken, env.ACCESS_KEY);
 
       // 유효한 액세스 토큰이라면 다음 미들웨어나 API 실행
-      req.user = { userId: decodedToken.userId }; // 사용자 정보를 req 객체에 저장
+      req.user = { userId: decodedToken.userId }; // 사용자 "아이디"를 req.user 객체에 저장
       next();
     } catch (error) {
       // 액세스 토큰이 만료되었을 경우, 리프레시 토큰 검증 미들웨어로 이동
       if (error.name === 'TokenExpiredError') {
+        console.log(
+          '🚀 ~ file: auth.middleware.js:28 ~ AuthenticationMiddleware ~ authenticateAccessToken= ~ accessToken:',
+          accessToken,
+        );
+
+        const decoded = jwt.decode(accessToken);
+        req.user = { userId: decoded.userId };
         return this.authenticateRefreshToken(req, res, next);
       }
       // 액세스 토큰의 오류라면 오류 메세지
@@ -42,7 +49,11 @@ class AuthenticationMiddleware {
 
       // 유효한 리프레시 토큰인 경우, 새로운 액세스 토큰 발급
       const newAccessToken = this.generateAccessToken({ userId: decodedToken.userId });
-      req.user.newAccessToken = newAccessToken; // 새로운 액세스 토큰을 req 객체에 저장
+      res.status(200).json({
+        message: '새로운 액세스 토큰 발급',
+        accessToken: newAccessToken,
+      });
+      req.user = { userId: decodedToken.userId }; // 사용자 "아이디"를 req.user 객체에 저장
       next();
     } catch (error) {
       if (error.name === 'TokenExpiredError') {
