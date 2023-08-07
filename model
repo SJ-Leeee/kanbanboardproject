@@ -6,3 +6,4 @@ npx sequelize model:generate --name Comments --attributes cardId:integer,userId:
 npx sequelize model:generate --name InviteUsers --attributes userId:integer,boardId:integer
 
 npx sequelize model:generate --name Cart_detail_option --attributes item_id:integer,cart_id:integer,option_id:integer
+insert into Users (loginId, password, userName) values ('test1','test','test')
