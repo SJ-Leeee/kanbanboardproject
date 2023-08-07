@@ -1,4 +1,4 @@
-const { Boards } = require('../models');
+const { Boards, InvitedUsers } = require('../models');
 
 class BoardRepository {
   findBoardByName = async (boardName) => {
@@ -17,6 +17,14 @@ class BoardRepository {
   deleteBoard = async (boardId) => {
     await Boards.destroy({ where: { id: boardId } });
     return;
+  };
+
+  exUserInBoard = async (boardId, adduserId) => {
+    return InvitedUsers.findOne({ where: { userId: adduserId, boardId } });
+  };
+
+  addUserToBoard = async (boardId, adduserId) => {
+    return InvitedUsers.create({ boardId, userId: adduserId });
   };
 }
 

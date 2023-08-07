@@ -56,5 +56,18 @@ class BoardController {
       return res.status(500).json({ err: err.message });
     }
   };
+  addUserToBoard = async (req, res) => {
+    try {
+      const userId = 4; // merge 후 변경
+      const { boardId } = req.params;
+      const { adduserId } = req.body;
+      const result = await this.boardService.addUserToBoard(userId, boardId, adduserId);
+      if (result.data) return res.status(result.code).json({ data: result.data });
+      return res.status(result.code).json({ message: result.message });
+    } catch (err) {
+      console.log(err);
+      return res.status(500).json({ err: err.message });
+    }
+  };
 }
 module.exports = BoardController;

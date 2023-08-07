@@ -3,7 +3,7 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.renameColumn('Columns', 'colmnName', 'columnName');
+    await queryInterface.renameTable('InviteUsers', 'InvitedUsers');
   },
 
   async down(queryInterface, Sequelize) {

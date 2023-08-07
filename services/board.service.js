@@ -57,5 +57,22 @@ class BoardService {
       throw error;
     }
   };
+  addUserToBoard = async (userId, boardId, adduserId) => {
+    // 보드 생성
+    try {
+      const exBoard = await this.boardRepository.findBoardById(boardId);
+      if (!exBoard) throw new Error('존재하지 않는 Board 입니다.');
+      if (exBoard.userId !== userId) throw new Error('권한이 없습니다.');
+
+      const exUserInBoard = await this.boardRepository.exUserInBoard(boardId, adduserId);
+      if (exUserInBoard) throw new Error(`이미 ${exBoard.boardName} 에 추가된 유저입니다.`);
+
+      await this.boardRepository.addUserToBoard(boardId, adduserId);
+
+      return { code: 200, message: `정상적으로 추가되었습니다.` };
+    } catch (error) {
+      throw error;
+    }
+  };
 }
 module.exports = BoardService;

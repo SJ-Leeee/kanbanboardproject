@@ -7,5 +7,6 @@ router.post('/board', boardController.createBoard);
 router.get('/board/:boardId', boardController.getBoard);
 router.patch('/board/:boardId', boardController.updateBoard);
 router.delete('/board/:boardId', boardController.deleteBoard);
+router.post('/board/:boardId/user', boardController.addUserToBoard);
 
 module.exports = router;
