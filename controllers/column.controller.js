@@ -4,7 +4,7 @@ class ColumnController {
   columnService = new ColumnService();
 
   // 컬럼 생성 컨트롤러
-  createColumn = async (rea, res, next) => {
+  createColumn = async (req, res, next) => {
     const { boardId } = req.params;
     const { columnName } = req.body;
     try {

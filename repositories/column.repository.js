@@ -9,7 +9,7 @@ class ColumnRepository {
     return createColumnData;
   };
   // 컬럼 조회
-  getColumn = async (boardId) => {
+  findAllColumn = async (boardId) => {
     const columns = await Columns.findAll({ where: { boardId } });
     // 반환값
     return columns;
