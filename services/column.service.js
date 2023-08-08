@@ -1,5 +1,5 @@
 const ColumnRepository = require('../repositories/column.repository');
-const { CustomError } = require('../_utills/customClass');
+const CustomError = require('../_utills/customClass');
 
 class ColumnService {
   columnRepository = new ColumnRepository();
