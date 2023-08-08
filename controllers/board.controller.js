@@ -5,7 +5,8 @@ class BoardController {
   createBoard = async (req, res) => {
     // 보드 생성
     try {
-      const userId = 4;
+      console.log(req.user);
+      const userId = req.user.userId;
       // 테스트용 user완성되면 res.locals <<
       const { boardColor, boardName, boardDesc } = req.body;
       const result = await this.boardService.createBoard(userId, boardName, boardDesc, boardColor);
