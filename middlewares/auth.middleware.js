@@ -20,7 +20,8 @@ class AuthenticationMiddleware {
   authenticateAccessToken = async (req, res, next) => {
     try {
       console.log(req.headers);
-      const accessToken = req.headers.authorization; // Bearer 액세스토큰에서 액세스토큰 추출
+      const accessToken = req.headers.authorization.split(' ')[1]; // Bearer 액세스토큰에서 액세스토큰 추출
+      // postman
       const decodedToken = jwt.verify(accessToken, env.ACCESS_KEY);
 
       // 유효한 액세스 토큰이라면 다음 미들웨어나 API 실행
