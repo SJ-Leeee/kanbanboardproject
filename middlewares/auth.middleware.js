@@ -4,6 +4,7 @@ require('dotenv').config();
 const env = process.env;
 
 //사용방법
+//const AuthenticationMiddleware = require('../middlewares/auth.middleware');
 //const authMiddleware = new AuthenticationMiddleware();
 //router.post('/comments', authMiddleware.authenticateAccessToken, (req, res) => {}
 

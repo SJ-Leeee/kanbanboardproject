@@ -25,7 +25,7 @@ redisClient.on('error', (error) => {
 app.use(express.json());
 app.use(cookieParser());
 
-app.use('/api', [authRouter, boardRoute,columnRouter, commentsRouter]);
+app.use('/api', [authRouter, boardRoute, columnRouter, commentsRouter]);
 
 app.use(express.static(path.join(__dirname, 'public')));
 
