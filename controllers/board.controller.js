@@ -12,7 +12,7 @@ class BoardController {
       return res.status(result.code).json({ message: result.message });
     } catch (err) {
       console.log(err);
-      return res.status(500).json({ err: err.message });
+      return res.status(err.status).json({ err: err.message });
     }
   };
 
@@ -26,7 +26,7 @@ class BoardController {
       // 오류검증
     } catch (err) {
       console.log(err);
-      return res.status(500).json({ err: err.message });
+      return res.status(err.status).json({ err: err.message });
     }
   };
 
@@ -40,7 +40,7 @@ class BoardController {
       return res.status(result.code).json({ message: result.message });
     } catch (err) {
       console.log(err);
-      return res.status(500).json({ err: err.message });
+      return res.status(err.status).json({ err: err.message });
     }
   };
 
@@ -53,7 +53,7 @@ class BoardController {
       return res.status(result.code).json({ message: result.message });
     } catch (err) {
       console.log(err);
-      return res.status(500).json({ err: err.message });
+      return res.status(err.status).json({ err: err.message });
     }
   };
   addUserToBoard = async (req, res) => {
@@ -66,7 +66,7 @@ class BoardController {
       return res.status(result.code).json({ message: result.message });
     } catch (err) {
       console.log(err);
-      return res.status(500).json({ err: err.message });
+      return res.status(err.status).json({ err: err.message });
     }
   };
 }
