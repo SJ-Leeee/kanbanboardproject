@@ -1,4 +1,5 @@
 const ColumnRepository = require('../repositories/column.repository');
+const { CustomError } = require('../_utills/customClass');
 
 class ColumnService {
   columnRepository = new ColumnRepository();
@@ -6,7 +7,7 @@ class ColumnService {
   // 컬럼 생성 메서드
   createColumn = async (boardId, columnName) => {
     // 예외처리
-    if (!columnName) throw new Error('NOT_FOUND_COLUMN_NAME');
+    if (!columnName) throw new CustomError('컬럼명을 형식에 맞게 입력해주세요.', 412);
     // 생성요청
     const createColumnData = await this.columnRepository.createColumn(boardId, columnName);
     // 반환값
@@ -42,7 +43,7 @@ class ColumnService {
   // 컬럼명 수정 메서드
   updateColumn = async (boardId, columnId, columnName) => {
     // 예외처리
-    if (!columnName) throw new Error('NOT_FOUND_COLUMN_NAME');
+    if (!columnName) throw new CustomError('컬럼명을 형식에 맞게 입력해주세요.', 412);
 
     const updateColumnData = await this.columnRepository.updateColumn(boardId, columnId, columnName);
     // 반환값
