@@ -4,8 +4,13 @@ require('dotenv').config();
 const env = process.env;
 
 //사용방법
-//const { authenticateAccessToken } = require('../middlewares/auth.middleware');
-//router.post('/comments', authenticateAccessToken, commentController.createComment);
+//const authMiddleware = new AuthenticationMiddleware();
+//router.post('/comments', authMiddleware.authenticateAccessToken, (req, res) => {}
+
+//포스트맨
+//Authorization 탭에 Type을 Bearer Token으로 변경한 뒤 로그인 응답에서 받아온 액세스 토큰 입력
+//썬더클라이언트
+//Headers탭에 hearder를 Authorization, value에는 Bearer 액세스 토큰
 
 class AuthenticationMiddleware {
   constructor() {
