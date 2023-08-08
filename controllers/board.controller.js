@@ -5,9 +5,7 @@ class BoardController {
   createBoard = async (req, res) => {
     // 보드 생성
     try {
-      console.log(req.user);
       const userId = req.user.userId;
-      // 테스트용 user완성되면 res.locals <<
       const { boardColor, boardName, boardDesc } = req.body;
       const result = await this.boardService.createBoard(userId, boardName, boardDesc, boardColor);
       if (result.data) return res.status(result.code).json({ data: result.data });
@@ -34,7 +32,7 @@ class BoardController {
 
   updateBoard = async (req, res) => {
     try {
-      const userId = 4; // merge 후 변경
+      const userId = req.user.userId;
       const { boardId } = req.params;
       const { boardName, boardDesc, boardColor } = req.body;
       const result = await this.boardService.updateBoard(userId, boardId, boardName, boardDesc, boardColor);
@@ -48,7 +46,7 @@ class BoardController {
 
   deleteBoard = async (req, res) => {
     try {
-      const userId = 5; // merge 후 변경
+      const userId = req.user.userId;
       const { boardId } = req.params;
       const result = await this.boardService.deleteBoard(userId, boardId);
       if (result.data) return res.status(result.code).json({ data: result.data });
@@ -60,7 +58,7 @@ class BoardController {
   };
   addUserToBoard = async (req, res) => {
     try {
-      const userId = 4; // merge 후 변경
+      const userId = req.user.userId;
       const { boardId } = req.params;
       const { adduserId } = req.body;
       const result = await this.boardService.addUserToBoard(userId, boardId, adduserId);
