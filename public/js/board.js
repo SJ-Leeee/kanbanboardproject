@@ -5,48 +5,50 @@ const columnBtn = document.querySelector('#columnBtn');
 
 // 컬럼생성 버튼 클릭 시 이벤트리스너 호출
 columnBtn.addEventListener('click', async () => {
-  const boardId = 21;
+  const params = new URLSearchParams(window.location.search);
+  const boardId = params.get('boardId');
   const columnName = prompt('생성할 컬럼명을 입력해주세요.');
+
+  const accessToken = localStorage.getItem('accessToken');
 
   try {
     const createResponse = await fetch(`/api/boards/${boardId}/columns`, {
       method: 'POST',
       headers: {
-        authorization:
-          'Bearer ' +
-          'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjE0LCJpYXQiOjE2OTE1NzA4MzEsImV4cCI6MTY5MTU3MTczMX0.GiHIRzWu0mn3SQ5fL18LwJCA0M-aSijncyPFoiVKnEA',
+        authorization: `Bearer ${accessToken}`,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({ columnName }),
     });
+
     await createResponse.json().then((result) => {
+      // 생성할 컬럼 HTML 세팅
+      const columnSet = `
+                        <div class="column" id="${result.data.columnName}-column">
+                          <h2 class="column-title">${result.data.columnName}</h2>
+                          <div class="card">Card 1</div>
+                          <div class="card">Card 2</div>
+                          <button class="add-card-button">Add Card</button>
+                          <button class="delete-column-button">delete</button>
+                        </div>
+                        `;
+
+      board.insertBefore(document.createRange().createContextualFragment(columnSet), columnBtn);
+
       result.errorMessage ? alert(result.errorMessage) : alert(`${columnName}으로 컬럼이 생성되었습니다.`);
     });
   } catch (err) {
     console.log(err.message);
     return alert('컬럼 생성에 실패하였습니다.');
   }
-
-  // 생성할 컬럼 HTML 세팅
-  const columnSet = `
-                  <div class="column" id="${columnName}-column">
-                    <h2 class="column-title">${columnName}</h2>
-                    <div class="card">Card 1</div>
-                    <div class="card">Card 2</div>
-                    <button class="add-card-button">Add Card</button>
-                    <button class="delete-column-button">delete</button>
-                  </div>
-                  `;
-
-  board.insertBefore(document.createRange().createContextualFragment(columnSet), columnBtn);
 });
 
 // 컬럼명 변경
-// h2태그
 const titles = document.querySelectorAll('.column-title');
 // 각각의 h2태그에 addEventListener 호출
 titles.forEach((title) => {
   title.addEventListener('click', (e) => {
+    const accessToken = localStorage.getItem('accessToken');
     // 현재 사용중인 제목 변수처리
     const useTitle = title.textContent;
     // 각 제목의 html 형식을 input 태그로 바꿔주고, value 값에 할당 변수 사용
@@ -79,9 +81,7 @@ titles.forEach((title) => {
           const changeColumnNameResponse = await fetch(`/api/boards/${boardId}/columns/${columnId}`, {
             method: 'PUT',
             headers: {
-              authorization:
-                'Bearer' +
-                'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjE0LCJpYXQiOjE2OTE1NzA4MzEsImV4cCI6MTY5MTU3MTczMX0.GiHIRzWu0mn3SQ5fL18LwJCA0M-aSijncyPFoiVKnEA',
+              authorization: `Bearer ${accessToken}`,
               'Content-Type': 'application/json',
             },
             body: JSON.stringify({ columnName }),
@@ -104,6 +104,7 @@ titles.forEach((title) => {
 const deleteButtons = document.querySelectorAll('.delete-column-button');
 deleteButtons.forEach((deleteBtn) => {
   deleteBtn.addEventListener('click', async (e) => {
+    const accessToken = localStorage.getItem('accessToken');
     // boardId
     const params = new URLSearchParams(window.location.search);
     const boardId = params.get('boardId');
@@ -114,9 +115,7 @@ deleteButtons.forEach((deleteBtn) => {
       const deleteResponse = await fetch(`/api/boards/${boardId}/columns/${columnId}`, {
         method: 'DELETE',
         headers: {
-          authorization:
-            'Bearer' +
-            'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEzLCJpYXQiOjE2OTE1NjM3MDEsImV4cCI6MTY5MTU2NDYwMX0.dxFgAuhkYxAHKNRTRA0HAbgH_gq0vw4b-Kn8OTDB7ks',
+          authorization: `Bearer ${accessToken}`,
           'Content-Type': 'application/json',
         },
       });
