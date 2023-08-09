@@ -6,11 +6,13 @@ const inviteUserModal = document.getElementById('inviteUserModal');
 const availableUsersList = document.getElementById('availableUsersList');
 const invitedUsersList = document.getElementById('invitedUsersList');
 
-inviteUserToBoard.addEventListener('click', async () => {
-  await openInviteUserModal();
+inviteUserToBoard.addEventListener('click', async (event) => {
+  const parentElement = event.target.parentNode;
+  const boardId = parentElement.querySelector('#boardNameSpan').getAttribute('data-board-id');
+  await openInviteUserModal(boardId);
 });
 
-async function openInviteUserModal() {
+async function openInviteUserModal(boardId) {
   try {
     const response = await fetch('/api/users', {
       method: 'GET',
@@ -21,6 +23,23 @@ async function openInviteUserModal() {
     if (response.ok) {
       const data = await response.json();
       renderAvailableUsers(data.data);
+    } else {
+      const responseData = await response.json();
+      alert(responseData.err);
+    }
+  } catch (error) {
+    console.error('오류 발생:', error);
+  }
+  try {
+    const response = await fetch(`/api/board/${boardId}/user`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+    if (response.ok) {
+      const data = await response.json();
+      renderInvitedUsers(data.data);
       inviteUserModal.style.display = 'block';
     } else {
       const responseData = await response.json();
@@ -41,6 +60,20 @@ function renderAvailableUsers(users) {
       <button class="invite-button" onclick="inviteUser(${user.id}, ${user.userName})">+</button>
     `;
     availableUsersList.appendChild(userItem);
+  });
+}
+
+function renderInvitedUsers(users) {
+  console.log(users);
+  invitedUsersList.innerHTML = ''; // 목록 초기화
+  users.forEach((user) => {
+    const userItem = document.createElement('div');
+    userItem.className = 'user-item';
+    userItem.innerHTML = `
+      <span>${user.User.userName}</span>
+      <button class="invite-button" onclick="removeInvitedUser(${user.User.id}, ${user.User.userName})">-</button>
+    `;
+    invitedUsersList.appendChild(userItem);
   });
 }
 
@@ -201,6 +234,7 @@ async function openModal(boardId, event) {
   const boardData = data.data;
   const userNamesArr = boardData.InvitedUsers.map((user) => user.User.userName);
 
+  boardNameSpan.setAttribute('data-board-id', boardData.id);
   boardNameSpan.textContent = boardData.boardName;
   headUserSpan.textContent = boardData.User.userName;
   invitedUsersSpan.textContent = userNamesArr.join(', ');
