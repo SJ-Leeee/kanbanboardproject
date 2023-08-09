@@ -1,4 +1,4 @@
-const { Boards, InvitedUsers } = require('../models');
+const { Boards, InvitedUsers, Users } = require('../models');
 
 class BoardRepository {
   findBoardByName = async (boardName) => {
@@ -19,12 +19,30 @@ class BoardRepository {
     return;
   };
 
-  exUserInBoard = async (boardId, adduserId) => {
-    return InvitedUsers.findOne({ where: { userId: adduserId, boardId } });
+  exUserInBoard = async (boardId, addUserId) => {
+    return await InvitedUsers.findOne({ where: { userId: addUserId, boardId } });
   };
 
-  addUserToBoard = async (boardId, adduserId) => {
-    return InvitedUsers.create({ boardId, userId: adduserId });
+  addUserToBoard = async (boardId, addUserId) => {
+    return await InvitedUsers.create({ boardId, userId: addUserId });
+  };
+
+  findUserById = async (addUserId) => {
+    return await Users.findOne({ where: { id: addUserId } });
+  };
+
+  findAllBoardByUserId = async (userId) => {
+    const InvitedBoards = await InvitedUsers.findAll({
+      attributes: [],
+      include: [
+        {
+          model: Boards,
+        },
+      ],
+      where: { userId },
+    });
+    const myBoards = await Boards.findAll({ where: { userId } });
+    return { InvitedBoards, myBoards };
   };
 }
 

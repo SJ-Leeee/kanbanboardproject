@@ -28,7 +28,7 @@ class AuthController {
       const { loginId, password } = req.body;
 
       const tokens = await this.authService.logIn(loginId, password);
-
+      res.header('authorization', `Bearer ${tokens.accessToken}`);
       return res.status(200).json({ message: '로그인 성공', accessToken: tokens.accessToken });
     } catch (error) {
       if (error.errorCode) {

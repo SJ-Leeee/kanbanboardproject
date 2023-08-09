@@ -5,15 +5,14 @@ class BoardController {
   createBoard = async (req, res) => {
     // 보드 생성
     try {
-      const userId = 4;
-      // 테스트용 user완성되면 res.locals <<
+      const userId = req.user.userId;
       const { boardColor, boardName, boardDesc } = req.body;
       const result = await this.boardService.createBoard(userId, boardName, boardDesc, boardColor);
       if (result.data) return res.status(result.code).json({ data: result.data });
       return res.status(result.code).json({ message: result.message });
     } catch (err) {
       console.log(err);
-      return res.status(500).json({ err: err.message });
+      return res.status(err.status).json({ err: err.message });
     }
   };
 
@@ -24,15 +23,16 @@ class BoardController {
       const result = await this.boardService.getBoard(boardId);
       if (result.data) return res.status(result.code).json({ data: result.data });
       return res.status(result.code).json({ message: result.message });
+      // 오류검증
     } catch (err) {
       console.log(err);
-      return res.status(500).json({ err: err.message });
+      return res.status(err.status).json({ err: err.message });
     }
   };
 
   updateBoard = async (req, res) => {
     try {
-      const userId = 4; // merge 후 변경
+      const userId = req.user.userId;
       const { boardId } = req.params;
       const { boardName, boardDesc, boardColor } = req.body;
       const result = await this.boardService.updateBoard(userId, boardId, boardName, boardDesc, boardColor);
@@ -40,25 +40,25 @@ class BoardController {
       return res.status(result.code).json({ message: result.message });
     } catch (err) {
       console.log(err);
-      return res.status(500).json({ err: err.message });
+      return res.status(err.status).json({ err: err.message });
     }
   };
 
   deleteBoard = async (req, res) => {
     try {
-      const userId = 5; // merge 후 변경
+      const userId = req.user.userId;
       const { boardId } = req.params;
       const result = await this.boardService.deleteBoard(userId, boardId);
       if (result.data) return res.status(result.code).json({ data: result.data });
       return res.status(result.code).json({ message: result.message });
     } catch (err) {
       console.log(err);
-      return res.status(500).json({ err: err.message });
+      return res.status(err.status).json({ err: err.message });
     }
   };
   addUserToBoard = async (req, res) => {
     try {
-      const userId = 4; // merge 후 변경
+      const userId = req.user.userId;
       const { boardId } = req.params;
       const { adduserId } = req.body;
       const result = await this.boardService.addUserToBoard(userId, boardId, adduserId);
@@ -66,7 +66,18 @@ class BoardController {
       return res.status(result.code).json({ message: result.message });
     } catch (err) {
       console.log(err);
-      return res.status(500).json({ err: err.message });
+      return res.status(err.status).json({ err: err.message });
+    }
+  };
+  getMyBoards = async (req, res) => {
+    try {
+      const userId = req.user.userId;
+      const result = await this.boardService.getMyBoards(userId);
+      if (result.data) return res.status(result.code).json({ data: result.data });
+      return res.status(result.code).json({ message: result.message });
+    } catch (err) {
+      console.log(err);
+      return res.status(err.status).json({ err: err.message });
     }
   };
 }
