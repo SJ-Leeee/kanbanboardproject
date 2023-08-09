@@ -1,8 +1,8 @@
 const myBoardList = document.querySelector('#myBoards');
 const invitedBoardList = document.querySelector('#invitedBoards');
+const accessToken = localStorage.getItem('accessToken');
 
 document.addEventListener('DOMContentLoaded', async () => {
-  const accessToken = localStorage.getItem('accessToken');
   if (!accessToken) {
     alert('로그인 후 이용가능한 기능입니다.');
     window.location.href = '/'; // auth.html 페이지로 이동
@@ -28,14 +28,6 @@ document.addEventListener('DOMContentLoaded', async () => {
   }
 });
 
-function redirectToAuthPage() {
-  window.location.href = '/html/auth.html'; // auth.html 페이지로 이동
-}
-
-function redirectToBoardPage(boardId) {
-  window.location.href = `/html/board.html?boardId=${boardId}`; // 해당 Board 페이지로 이동
-}
-
 function renderBoards(data) {
   const invitedBoards = data.data.invitedBoards;
   const myBoards = data.data.myBoards;
@@ -60,7 +52,7 @@ function renderBoards(data) {
 }
 // html 삽입
 
-function openModal(boardId, event) {
+async function openModal(boardId, event) {
   // 모달창 요소 가져오기
   event.stopPropagation();
   const modal = document.getElementById('myModal');
@@ -69,33 +61,64 @@ function openModal(boardId, event) {
   const createdAtSpan = document.getElementById('createdAtSpan');
   const editButton = document.getElementById('editButton');
   const deleteButton = document.getElementById('deleteButton');
+  const editForm = document.getElementById('editForm');
+  const boardNameInput = document.getElementById('boardNameInput');
+  const boardDescInput = document.getElementById('boardDescInput');
+  const boardColorSelect = document.getElementById('boardColorSelect');
+  const saveButton = document.getElementById('saveButton');
+  const cancelButton = document.getElementById('cancelButton');
 
-  // 여기에서 boardId를 사용하여 필요한 정보를 가져오고 설정합니다.
-  // 더미 데이터를 사용한 예시
-  const dummyData = {
-    headUser: 'John Doe',
-    invitedUsers: ['Alice', 'Bob', 'Charlie'],
-    createdAt: '2023-07-21',
-  };
+  let data;
+  try {
+    const response = await fetch(`/api/board/${boardId}`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+    if (response.ok) {
+      data = await response.json();
+    } else {
+      console.error('Login failed');
+    }
+  } catch (error) {
+    console.error('An error occurred:', error);
+  }
 
-  // 모달 내용 설정
-  headUserSpan.textContent = dummyData.headUser;
-  invitedUsersSpan.textContent = dummyData.invitedUsers.join(', ');
-  createdAtSpan.textContent = dummyData.createdAt;
+  const boardData = data.data;
+  const userNamesArr = boardData.InvitedUsers.map((user) => user.User.userName);
+
+  headUserSpan.textContent = boardData.User.userName;
+  invitedUsersSpan.textContent = userNamesArr.join(', ');
+  createdAtSpan.textContent = boardData.createdAt;
 
   // 모달창 열기
   modal.style.display = 'block';
 
   // 수정 버튼 클릭 시 동작
   editButton.onclick = function () {
-    // 수정 버튼 클릭 시 동작을 여기에 추가
-    // 예: 수정하는 폼을 보여주거나 다른 동작을 수행
+    editForm.style.display = 'block';
+  };
+
+  // 취소 버튼 클릭 시 동작
+  cancelButton.onclick = function () {
+    editForm.style.display = 'none';
   };
 
   // 삭제 버튼 클릭 시 동작
   deleteButton.onclick = function () {
     // 삭제 버튼 클릭 시 동작을 여기에 추가
-    // 예: 삭제 확인 팝업 띄우기 등
+  };
+
+  // 저장 버튼 클릭 시 동작
+  saveButton.onclick = function () {
+    // 수정된 정보 저장 및 처리
+    const editedData = {
+      boardName: boardNameInput.value,
+      boardDesc: boardDescInput.value,
+      boardColor: boardColorSelect.value,
+    };
+    editForm.style.display = 'none';
   };
 }
 
@@ -103,4 +126,12 @@ function openModal(boardId, event) {
 function closeModal() {
   const modal = document.getElementById('myModal');
   modal.style.display = 'none';
+}
+
+function redirectToAuthPage() {
+  window.location.href = '/html/auth.html'; // auth.html 페이지로 이동
+}
+
+function redirectToBoardPage(boardId) {
+  window.location.href = `/html/board.html?boardId=${boardId}`; // 해당 Board 페이지로 이동
 }
