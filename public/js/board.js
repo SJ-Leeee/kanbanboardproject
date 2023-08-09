@@ -80,11 +80,7 @@ document.addEventListener('DOMContentLoaded', async (e) => {
         inputTag.selectionStart = useTitle.length;
         // 포커스를 벗어날 시 기존 제목으로 변경
         inputTag.addEventListener('blur', (e) => {
-          // console.log(e.target);
-          // if (e.target !== inputTag) {
-          //   title.innerHTML = `<h2 class="column-title">${useTitle}</h2>`;
-          // window.location.reload();
-          // }
+          window.location.reload();
         });
 
         inputTag.addEventListener('keydown', async (e) => {
