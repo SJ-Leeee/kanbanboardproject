@@ -15,5 +15,7 @@ router.post('/board/:boardId/user', authmiddleware.authenticateAccessToken, boar
 
 // 유저데이터
 router.get('/users', boardController.getAllUsers);
+// 보드에 추가된 user 조회
+router.get('/board/:boardId/user', boardController.getUserInBoard);
 
 module.exports = router;
