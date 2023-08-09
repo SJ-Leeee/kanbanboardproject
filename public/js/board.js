@@ -1,52 +1,133 @@
-// 더미 데이터로 사용할 카드 정보
-const dummyCards = [
-  { id: 1, title: 'Task 1' },
-  { id: 2, title: 'Task 2' },
-];
+/** 컬럼기능 관리 로직 */
 
-// DOM 요소들을 선택합니다.
+// main tag
 const board = document.querySelector('.board');
-const addColumnButton = document.querySelector('.add-column-button');
+// create-column button tag
+const columnBtn = document.querySelector('#columnBtn');
 
-// 각 컬럼에 더미 데이터의 카드를 추가하는 함수
-const addCardsToColumns = () => {
-  const columns = board.querySelectorAll('.column');
+// 컬럼생성 버튼 클릭 시 이벤트리스너 호출
+columnBtn.addEventListener('click', async () => {
+  const boardId = 21;
+  const columnName = prompt('생성할 컬럼명을 입력해주세요.');
 
-  columns.forEach((column) => {
-    // 더미 데이터의 카드를 생성하여 컬럼에 추가합니다.
-    dummyCards.forEach((card) => {
-      const cardElement = document.createElement('div');
-      cardElement.classList.add('card');
-      cardElement.textContent = card.title;
-      column.appendChild(cardElement);
+  try {
+    const createResponse = await fetch(`/api/boards/${boardId}/columns`, {
+      method: 'POST',
+      headers: {
+        authorization:
+          'Bearer ' +
+          'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjE0LCJpYXQiOjE2OTE1NzA4MzEsImV4cCI6MTY5MTU3MTczMX0.GiHIRzWu0mn3SQ5fL18LwJCA0M-aSijncyPFoiVKnEA',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ columnName }),
+    });
+    await createResponse.json().then((result) => {
+      result.errorMessage ? alert(result.errorMessage) : alert(`${columnName}으로 컬럼이 생성되었습니다.`);
+    });
+  } catch (err) {
+    console.log(err.message);
+    return alert('컬럼 생성에 실패하였습니다.');
+  }
+
+  // 생성할 컬럼 HTML 세팅
+  const columnSet = `
+                  <div class="column" id="${columnName}-column">
+                    <h2 class="column-title">${columnName}</h2>
+                    <div class="card">Card 1</div>
+                    <div class="card">Card 2</div>
+                    <button class="add-card-button">Add Card</button>
+                    <button class="delete-column-button">delete</button>
+                  </div>
+                  `;
+
+  board.insertBefore(document.createRange().createContextualFragment(columnSet), columnBtn);
+});
+
+// 컬럼명 변경
+// h2태그
+const titles = document.querySelectorAll('.column-title');
+// 각각의 h2태그에 addEventListener 호출
+titles.forEach((title) => {
+  title.addEventListener('click', (e) => {
+    // 현재 사용중인 제목 변수처리
+    const useTitle = title.textContent;
+    // 각 제목의 html 형식을 input 태그로 바꿔주고, value 값에 할당 변수 사용
+    title.innerHTML = `<input type="text" value="${useTitle}" class="edit-input">`;
+
+    const inputTag = title.querySelector('.edit-input');
+    inputTag.focus();
+    // 커서위치 맨 뒤로
+    inputTag.selectionStart = useTitle.length;
+
+    inputTag.addEventListener('blur', (e) => {
+      // console.log(e.target);
+      // if (e.target !== inputTag) {
+      //   title.innerHTML = `<h2 class="column-title">${useTitle}</h2>`;
+      window.location.reload();
+      // }
     });
 
-    // 컬럼에 카드를 추가하는 버튼을 생성하여 컬럼에 추가합니다.
-    const addCardButton = document.createElement('button');
-    addCardButton.classList.add('add-card-button');
-    addCardButton.textContent = 'Add Card';
-    column.appendChild(addCardButton);
+    inputTag.addEventListener('keydown', async (e) => {
+      // boardId
+      const params = new URLSearchParams(window.location.search);
+      const boardId = params.get('boardId');
+      // columnId
+      const columnId = e.target.parentNode.parentNode.id;
 
-    // 카드 추가 버튼에 이벤트 리스너를 등록합니다.
-    addCardButton.addEventListener('click', () => {
-      const cardTitle = prompt('Enter card title:');
-      if (cardTitle) {
-        const cardElement = document.createElement('div');
-        cardElement.classList.add('card');
-        cardElement.textContent = cardTitle;
-        column.insertBefore(cardElement, addCardButton);
+      try {
+        if (e.key === 'Enter') {
+          const columnName = inputTag.value;
+
+          const changeColumnNameResponse = await fetch(`/api/boards/${boardId}/columns/${columnId}`, {
+            method: 'PUT',
+            headers: {
+              authorization:
+                'Bearer' +
+                'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjE0LCJpYXQiOjE2OTE1NzA4MzEsImV4cCI6MTY5MTU3MTczMX0.GiHIRzWu0mn3SQ5fL18LwJCA0M-aSijncyPFoiVKnEA',
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ columnName }),
+          });
+
+          await changeColumnNameResponse.json().then((result) => {
+            return result.errorMessage ? alert(result.errorMessage) : alert(result.message);
+          });
+        }
+      } catch (err) {
+        console.log(err);
+        return alert('컬럼명 변경에 실패하였습니다.');
       }
     });
   });
-};
-
-// 컬럼 추가 버튼에 이벤트 리스너를 등록합니다.
-addColumnButton.addEventListener('click', () => {
-  const newColumn = document.createElement('div');
-  newColumn.classList.add('column');
-  board.insertBefore(newColumn, addColumnButton);
-  addCardsToColumns();
 });
 
-// 초기 실행시 더미 데이터의 카드를 추가합니다.
-addCardsToColumns();
+// 컬럼 삭제
+// 컬럼삭제 버튼태그 가져오고,
+const deleteButtons = document.querySelectorAll('.delete-column-button');
+deleteButtons.forEach((deleteBtn) => {
+  deleteBtn.addEventListener('click', async (e) => {
+    // boardId
+    const params = new URLSearchParams(window.location.search);
+    const boardId = params.get('boardId');
+    // columnId
+    const columnId = e.target.parentNode.id;
+
+    try {
+      const deleteResponse = await fetch(`/api/boards/${boardId}/columns/${columnId}`, {
+        method: 'DELETE',
+        headers: {
+          authorization:
+            'Bearer' +
+            'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEzLCJpYXQiOjE2OTE1NjM3MDEsImV4cCI6MTY5MTU2NDYwMX0.dxFgAuhkYxAHKNRTRA0HAbgH_gq0vw4b-Kn8OTDB7ks',
+          'Content-Type': 'application/json',
+        },
+      });
+      await deleteResponse.json().then((result) => {
+        result.errorMessage ? alert(result.errorMessage) : alert(result.message);
+      });
+    } catch (err) {
+      console.log(err);
+      return alert('컬럼 삭제에 실패하였습니다.');
+    }
+  });
+});
