@@ -1,4 +1,4 @@
-const { get } = require('../../routes/card_detail.route');
+// const { get } = require('../../routes/card_detail.route');
 
 const wrapper = document.querySelector('.wrapper');
 const loginLink = document.querySelector('.login-link');
@@ -95,10 +95,9 @@ loginForm.addEventListener('submit', async (event) => {
 //   return null;
 // }
 
-// const accesstoken = getCookieValue('access_token')
+// const accessToken = getCookieValue('access_token')
 
 // headers: {
 //   'Content-Type': 'application/json',
 //   Authorization: `Bearer ${accessToken}`,
 // },
-
