@@ -60,6 +60,10 @@ module.exports = (sequelize, DataTypes) => {
       dueDate: {
         type: Sequelize.DATE,
       },
+      // ""dueDate"": {
+      //   ""start"": ""2023-06-07"",
+      //   ""end"": ""2023-07-08""
+      //   }
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE,

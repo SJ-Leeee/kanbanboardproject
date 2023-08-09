@@ -6,7 +6,7 @@ class CardDetailController {
   /**@댓글생성부분 */
   createComment = async (req, res) => {
     try {
-      const userId = req.body.userId || 4; //userId가 없어서 하드 코딩으로 4넣음
+      const { userId } = req.user;
       const cardId = req.params.cardId; //DB에 저장된 cardId를 변수에 담음.
       const { commentText } = req.body;
 
@@ -38,7 +38,7 @@ class CardDetailController {
     try {
       const { id } = req.params;
       const { commentText } = req.body;
-      const userId = req.body.userId || 4; // 하드코딩으로 임시로 userId 4 할당
+      const { userId } = req.user;
       const { code, data } = await this.cardDetailService.updateComment({
         // cardDetailService의 updateComment변수에 아래 인자들 저장
         id,
@@ -57,7 +57,7 @@ class CardDetailController {
   deleteComment = async (req, res) => {
     try {
       const { id } = req.params;
-      const userId = req.body.userId || 4; // 하드코딩으로 임시로 userId 4 할당
+      const { userId } = req.user; // 하드코딩으로 임시로 userId 4 할당
       const { code, data } = await this.cardDetailService.deleteComment({
         // cardDetailService의 updateComment변수에 아래 인자들 저장
         id,
