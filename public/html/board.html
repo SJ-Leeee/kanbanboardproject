@@ -9,7 +9,9 @@
   <body>
     <header class="header">
       <div class="header-left">
-        <button class="home-button">Home</button>
+        <a href="/" class="home-button">
+          <img src="../img/Thrillo.jpg" alt="Home" />
+        </a>
       </div>
       <div class="header-middle">
         <h1 class="board-name">키오스크</h1>
@@ -19,11 +21,29 @@
       </div>
     </header>
     <main class="board">
-      <div class="column">To-do</div>
-      <div class="column">In-progress</div>
-      <div class="column">Done</div>
+      <div class="column" id="todo-column">
+        <h2>To-do</h2>
+        <!-- To-do 컬럼에 더미 Card 데이터 추가 -->
+        <div class="card">Card 1</div>
+        <div class="card">Card 2</div>
+        <button class="add-card-button">Add Card</button>
+      </div>
+      <div class="column" id="in-progress-column">
+        <h2>In-progress</h2>
+        <!-- In-progress 컬럼에 더미 Card 데이터 추가 -->
+        <div class="card">Card 3</div>
+        <div class="card">Card 4</div>
+        <button class="add-card-button">Add Card</button>
+      </div>
+      <div class="column" id="done-column">
+        <h2>Done</h2>
+        <!-- Done 컬럼에 더미 Card 데이터 추가 -->
+        <div class="card">Card 5</div>
+        <div class="card">Card 6</div>
+        <button class="add-card-button">Add Card</button>
+      </div>
       <button class="add-column-button">Add Column</button>
     </main>
-    <script src="script.js"></script>
+    <script></script>
   </body>
 </html>

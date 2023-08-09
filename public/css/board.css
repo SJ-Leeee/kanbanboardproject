@@ -24,6 +24,11 @@ body {
 
 .header-right {
   margin-left: auto;
+  color: #38495a; /* 이미지와 같은 배경색으로 색상 설정 */
+}
+
+.board-desc {
+  margin: 0; /* 기본 마진 제거 */
 }
 
 .board-name {
@@ -56,4 +61,17 @@ body {
   padding: 5px 10px;
   border-radius: 5px;
   cursor: pointer;
+}
+.home-button {
+  display: inline-block;
+  background-color: #2e3e4e; /* 주변 색상 설정 */
+  padding: 10px;
+  border-radius: 50%; /* 동그랗게 만듭니다 */
+  overflow: hidden; /* 내부 이미지를 동그랗게 유지하기 위해 필요합니다 */
+}
+
+.home-button img {
+  width: 130px;
+  height: auto;
+  filter: brightness(70%); /* 명암 조절 */
 }
