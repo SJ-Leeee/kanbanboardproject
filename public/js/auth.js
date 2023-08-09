@@ -1,3 +1,5 @@
+const { get } = require('../../routes/card_detail.route');
+
 const wrapper = document.querySelector('.wrapper');
 const loginLink = document.querySelector('.login-link');
 const registerLink = document.querySelector('.register-link');
@@ -11,44 +13,92 @@ loginLink.addEventListener('click', () => {
   wrapper.classList.remove('active');
 });
 
-document.addEventListener('DOMContentLoaded', () => {
-  const loginForm = document.querySelector('.login-form');
+const registerForm = document.querySelector('.register-form');
 
-  loginForm.addEventListener('submit', async (event) => {
-    event.preventDefault();
+registerForm.addEventListener('submit', async (event) => {
+  event.preventDefault();
 
-    const id = loginForm.querySelector('input[type="text"]').value;
-    const password = loginForm.querySelector('input[type="password"]').value;
+  const id = registerForm.querySelector('#register-id input').value;
+  const password = registerForm.querySelector('#register-password input').value;
+  const name = registerForm.querySelector('#register-name input').value;
 
-    try {
-      const response = await fetch('/api/login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ loginId: id, password }),
-      });
+  try {
+    const response = await fetch('/api/signup', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        loginId: id,
+        password: password,
+        userName: name,
+      }),
+    });
 
-      if (response.ok) {
-        // 로그인이 성공했을 때 처리
-        const data = await response.json();
-        const accessToken = data.accessToken;
-        if (localStorage.getItem('accessToken')) {
-          localStorage.removeItem('accessToken');
-        }
-
-        // 로컬 스토리지에 accessToken 저장
-        localStorage.setItem('accessToken', accessToken);
-
-        // 로그인 후 이동할 페이지로 리다이렉트 등의 동작 수행
-        window.location.href = '/html/mypage.html'; // 이동할 페이지 URL
-      } else {
-        // 로그인이 실패했을 때 처리
-        console.error('Login failed');
-      }
-    } catch (error) {
-      console.error('An error occurred:', error);
+    if (response.ok) {
+      alert('회원가입이 완료되었습니다.');
+      // 회원가입 성공 후 로그인 페이지로 이동
+      window.location.href = '/html/auth.html';
+    } else {
+      const data = await response.json();
+      alert(`회원가입 실패: ${data.message}`);
     }
-  });
+  } catch (error) {
+    console.error('Error:', error);
+  }
 });
-// 임시 로그인 함수, accesstoken 로컬스토리지에 저장했습니다.
+
+const loginForm = document.querySelector('.login-form');
+
+loginForm.addEventListener('submit', async (event) => {
+  event.preventDefault();
+
+  const id = loginForm.querySelector('#login-id input').value;
+  const password = loginForm.querySelector('#login-password input').value;
+
+  try {
+    const response = await fetch('/api/login', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        loginId: id,
+        password: password,
+      }),
+    });
+
+    if (response.ok) {
+      // 로그인 성공시 페이지 이동
+      window.location.href = '/html/mypage.html';
+    } else {
+      const data = await response.json();
+      alert(`로그인 실패: ${data.message}`);
+    }
+  } catch (error) {
+    console.error('Error:', error);
+  }
+});
+
+// 사용방법
+// 쿠키에서 액세스 토큰을 가져오는 함수
+// function getCookieValue(cookieName) {
+//   const cookies = document.cookie;
+//   const cookieArray = cookies.split(';');
+
+//   for (const cookie of cookieArray) {
+//     const [name, value] = cookie.trim().split('=');
+//     if (name === cookieName) {
+//       return value;
+//     }
+//   }
+//   return null;
+// }
+
+// const accesstoken = getCookieValue('access_token')
+
+// headers: {
+//   'Content-Type': 'application/json',
+//   Authorization: `Bearer ${accessToken}`,
+// },
+
