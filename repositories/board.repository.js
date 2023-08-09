@@ -32,7 +32,7 @@ class BoardRepository {
   };
 
   findAllBoardByUserId = async (userId) => {
-    const InvitedBoards = await InvitedUsers.findAll({
+    const invitedBoards = await InvitedUsers.findAll({
       attributes: [],
       include: [
         {
@@ -42,7 +42,7 @@ class BoardRepository {
       where: { userId },
     });
     const myBoards = await Boards.findAll({ where: { userId } });
-    return { InvitedBoards, myBoards };
+    return { invitedBoards, myBoards };
   };
 }
 
