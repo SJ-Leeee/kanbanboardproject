@@ -9,13 +9,26 @@ document.addEventListener('DOMContentLoaded', async (e) => {
   const params = new URLSearchParams(window.location.search);
   const boardId = params.get('boardId');
   // accessToken
-  const accessToken = localStorage.getItem('accessToken');
+  function getCookieValue(cookieName) {
+    const cookies = document.cookie;
+    const cookieArray = cookies.split(';');
+
+    for (const cookie of cookieArray) {
+      const [name, value] = cookie.trim().split('=');
+      if (name === cookieName) {
+        return value;
+      }
+    }
+    return null;
+  }
+
+  const accessToken = getCookieValue('access_token');
   // 컬럼조회 API fetch
   try {
     const getColumnResponse = await fetch(`/api/boards/${boardId}/columns`, {
       method: 'GET',
       headers: {
-        authorization: `Bearer ${accessToken}`,
+        Authorization: `Bearer ${accessToken}`,
         'Content-Type': 'application/json',
       },
     });
@@ -48,12 +61,25 @@ document.addEventListener('DOMContentLoaded', async (e) => {
         // columnId
         const columnId = e.target.parentNode.id;
         // accessToken
-        const accessToken = localStorage.getItem('accessToken');
+        function getCookieValue(cookieName) {
+          const cookies = document.cookie;
+          const cookieArray = cookies.split(';');
+
+          for (const cookie of cookieArray) {
+            const [name, value] = cookie.trim().split('=');
+            if (name === cookieName) {
+              return value;
+            }
+          }
+          return null;
+        }
+
+        const accessToken = getCookieValue('access_token');
         // 컬럼삭제 API fetch
         const deleteResponse = await fetch(`/api/boards/${boardId}/columns/${columnId}`, {
           method: 'DELETE',
           headers: {
-            authorization: `Bearer ${accessToken}`,
+            Authorization: `Bearer ${accessToken}`,
             'Content-Type': 'application/json',
           },
         });
@@ -87,7 +113,20 @@ document.addEventListener('DOMContentLoaded', async (e) => {
           // columnId
           const columnId = e.target.parentNode.parentNode.id;
           // accessToken
-          const accessToken = localStorage.getItem('accessToken');
+          function getCookieValue(cookieName) {
+            const cookies = document.cookie;
+            const cookieArray = cookies.split(';');
+
+            for (const cookie of cookieArray) {
+              const [name, value] = cookie.trim().split('=');
+              if (name === cookieName) {
+                return value;
+              }
+            }
+            return null;
+          }
+
+          const accessToken = getCookieValue('access_token');
           // 컬럼명 변경 API fetch
 
           if (e.key === 'Enter') {
@@ -96,7 +135,7 @@ document.addEventListener('DOMContentLoaded', async (e) => {
             const changeColumnNameResponse = await fetch(`/api/boards/${boardId}/columns/${columnId}`, {
               method: 'PUT',
               headers: {
-                authorization: `Bearer ${accessToken}`,
+                Authorization: `Bearer ${accessToken}`,
                 'Content-Type': 'application/json',
               },
               body: JSON.stringify({ columnName }),
@@ -123,7 +162,20 @@ columnBtn.addEventListener('click', async () => {
   const params = new URLSearchParams(window.location.search);
   const boardId = params.get('boardId');
   // accessToken
-  const accessToken = localStorage.getItem('accessToken');
+  function getCookieValue(cookieName) {
+    const cookies = document.cookie;
+    const cookieArray = cookies.split(';');
+
+    for (const cookie of cookieArray) {
+      const [name, value] = cookie.trim().split('=');
+      if (name === cookieName) {
+        return value;
+      }
+    }
+    return null;
+  }
+
+  const accessToken = getCookieValue('access_token');
   // 생성 columnName
   const columnName = prompt('생성할 컬럼명을 입력해주세요.');
   // 컬럼생성 API fetch
@@ -131,7 +183,7 @@ columnBtn.addEventListener('click', async () => {
     const createResponse = await fetch(`/api/boards/${boardId}/columns`, {
       method: 'POST',
       headers: {
-        authorization: `Bearer ${accessToken}`,
+        Authorization: `Bearer ${accessToken}`,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({ columnName }),
