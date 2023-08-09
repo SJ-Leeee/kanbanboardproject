@@ -4,9 +4,7 @@ const port = 3000;
 const path = require('path');
 const cookieParser = require('cookie-parser');
 const commentsRouter = require('./routes/card_detail.route');
-
 const cardsRouter = require('./routes/card.route');
-
 const authRouter = require('./routes/auth.route');
 const columnRouter = require('./routes/column.route.js');
 const boardRoute = require('./routes/board.route');

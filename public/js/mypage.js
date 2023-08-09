@@ -1,6 +1,20 @@
 const myBoardList = document.querySelector('#myBoards');
 const invitedBoardList = document.querySelector('#invitedBoards');
-const accessToken = localStorage.getItem('accessToken');
+// accessToken
+function getCookieValue(cookieName) {
+  const cookies = document.cookie;
+  const cookieArray = cookies.split(';');
+
+  for (const cookie of cookieArray) {
+    const [name, value] = cookie.trim().split('=');
+    if (name === cookieName) {
+      return value;
+    }
+  }
+  return null;
+}
+
+const accessToken = getCookieValue('access_token');
 
 document.addEventListener('DOMContentLoaded', async () => {
   if (!accessToken) {

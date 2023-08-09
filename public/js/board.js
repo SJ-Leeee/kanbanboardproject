@@ -2,127 +2,212 @@
 const board = document.querySelector('.board');
 // create-column button tag
 const columnBtn = document.querySelector('#columnBtn');
-const accessToken = localStorage.getItem('accessToken');
-// 컬럼생성 버튼 클릭 시 이벤트리스너 호출
+
+// 컬럼 조회
+document.addEventListener('DOMContentLoaded', async (e) => {
+  // boardId
+  const params = new URLSearchParams(window.location.search);
+  const boardId = params.get('boardId');
+  // accessToken
+  function getCookieValue(cookieName) {
+    const cookies = document.cookie;
+    const cookieArray = cookies.split(';');
+
+    for (const cookie of cookieArray) {
+      const [name, value] = cookie.trim().split('=');
+      if (name === cookieName) {
+        return value;
+      }
+    }
+    return null;
+  }
+
+  const accessToken = getCookieValue('access_token');
+  // 컬럼조회 API fetch
+  try {
+    const getColumnResponse = await fetch(`/api/boards/${boardId}/columns`, {
+      method: 'GET',
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        'Content-Type': 'application/json',
+      },
+    });
+    // fetch로 받아온 data 가공
+    await getColumnResponse.json().then((result) => {
+      result.data.forEach((data) => {
+        // HTML 세팅
+        const columnSet = `
+                          <div class="column" id="${data.id}">
+                            <h2 class="column-title">${data.columnName}</h2>
+                            <div class="card">Card 1</div>
+                            <div class="card">Card 2</div>
+                            <button class="add-card-button">Add Card</button>
+                            <button class="delete-column-button">delete</button>
+                          </div>
+                          `;
+        // 화면에 HTML 띄우기
+        board.insertBefore(document.createRange().createContextualFragment(columnSet), columnBtn);
+      });
+      // 오류 출력
+      if (result.errorMessage) {
+        return alert(result.errorMessage);
+      }
+    });
+
+    // 컬럼 삭제
+    const deleteButtons = document.querySelectorAll('.delete-column-button');
+    deleteButtons.forEach((deleteBtn) => {
+      deleteBtn.addEventListener('click', async (e) => {
+        // columnId
+        const columnId = e.target.parentNode.id;
+        // accessToken
+        function getCookieValue(cookieName) {
+          const cookies = document.cookie;
+          const cookieArray = cookies.split(';');
+
+          for (const cookie of cookieArray) {
+            const [name, value] = cookie.trim().split('=');
+            if (name === cookieName) {
+              return value;
+            }
+          }
+          return null;
+        }
+
+        const accessToken = getCookieValue('access_token');
+        // 컬럼삭제 API fetch
+        const deleteResponse = await fetch(`/api/boards/${boardId}/columns/${columnId}`, {
+          method: 'DELETE',
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+            'Content-Type': 'application/json',
+          },
+        });
+        // fetch로 받아온 data 가공
+        await deleteResponse.json().then((result) => {
+          result.errorMessage ? alert(result.errorMessage) : alert(result.message);
+          window.location.reload();
+        });
+      });
+    });
+
+    // 컬럼명 변경
+    const h2Tag = document.querySelectorAll('.column-title');
+    h2Tag.forEach((title) => {
+      title.addEventListener('click', (e) => {
+        // 현재 사용중인 제목 변수처리
+        const useTitle = title.textContent;
+        // 각 제목의 html 형식을 input 태그로 바꿔주고, value 값에 할당 변수 사용
+        title.innerHTML = `<input type="text" value="${useTitle}" class="edit-input">`;
+
+        const inputTag = title.querySelector('.edit-input');
+        inputTag.focus();
+        // 커서위치 맨 뒤로
+        inputTag.selectionStart = useTitle.length;
+        // 포커스를 벗어날 시 기존 제목으로 변경
+        inputTag.addEventListener('blur', (e) => {
+          window.location.reload();
+        });
+
+        inputTag.addEventListener('keydown', async (e) => {
+          // columnId
+          const columnId = e.target.parentNode.parentNode.id;
+          // accessToken
+          function getCookieValue(cookieName) {
+            const cookies = document.cookie;
+            const cookieArray = cookies.split(';');
+
+            for (const cookie of cookieArray) {
+              const [name, value] = cookie.trim().split('=');
+              if (name === cookieName) {
+                return value;
+              }
+            }
+            return null;
+          }
+
+          const accessToken = getCookieValue('access_token');
+          // 컬럼명 변경 API fetch
+
+          if (e.key === 'Enter') {
+            const columnName = inputTag.value;
+
+            const changeColumnNameResponse = await fetch(`/api/boards/${boardId}/columns/${columnId}`, {
+              method: 'PUT',
+              headers: {
+                Authorization: `Bearer ${accessToken}`,
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({ columnName }),
+            });
+            // fetch로 받아온 data 가공
+            await changeColumnNameResponse.json().then((result) => {
+              h2Tag.innerHTML = `<h2 class="column-title">${columnName}</h2>`;
+              result.errorMessage ? alert(result.errorMessage) : alert(result.message);
+              window.location.reload();
+            });
+          }
+        });
+      });
+    });
+  } catch (err) {
+    console.log(err);
+    return alert('컬럼 조회에 실패하였습니다.');
+  }
+});
+
+// 컬럼 생성
 columnBtn.addEventListener('click', async () => {
-  const boardId = 24; // 여기서 param
+  // boardId
+  const params = new URLSearchParams(window.location.search);
+  const boardId = params.get('boardId');
+  // accessToken
+  function getCookieValue(cookieName) {
+    const cookies = document.cookie;
+    const cookieArray = cookies.split(';');
+
+    for (const cookie of cookieArray) {
+      const [name, value] = cookie.trim().split('=');
+      if (name === cookieName) {
+        return value;
+      }
+    }
+    return null;
+  }
+
+  const accessToken = getCookieValue('access_token');
+  // 생성 columnName
   const columnName = prompt('생성할 컬럼명을 입력해주세요.');
-  console.log(columnName);
+  // 컬럼생성 API fetch
   try {
     const createResponse = await fetch(`/api/boards/${boardId}/columns`, {
       method: 'POST',
       headers: {
         Authorization: `Bearer ${accessToken}`,
+        'Content-Type': 'application/json',
       },
       body: JSON.stringify({ columnName }),
     });
+    // fetch로 받아온 data 가공
     await createResponse.json().then((result) => {
-      result.errorMessage ? alert(result.errorMessage) : alert(`${columnName}으로 컬럼이 생성되었습니다.`);
+      // HTML 세팅
+      const columnSet = `
+                        <div class="column" id="${result.data.id}">
+                          <h2 class="column-title">${result.data.columnName}</h2>
+                          <div class="card">Card 1</div>
+                          <div class="card">Card 2</div>
+                          <button class="add-card-button">Add Card</button>
+                          <button class="delete-column-button">delete</button>
+                        </div>
+                        `;
+      // HTML 화면에 띄우기
+      board.insertBefore(document.createRange().createContextualFragment(columnSet), columnBtn);
+      // 메시지 출력
+      result.errorMessage ? alert(result.errorMessage) : alert(result.message);
+      window.location.reload();
     });
   } catch (err) {
     console.log(err.message);
     return alert('컬럼 생성에 실패하였습니다.');
   }
-
-  // 생성할 컬럼 HTML 세팅
-  const columnSet = `
-                  <div class="column" id="${columnName}-column">
-                    <h2 class="column-title">${columnName}</h2>
-                    <div class="card">Card 1</div>
-                    <div class="card">Card 2</div>
-                    <button class="add-card-button">Add Card</button>
-                    <button class="delete-column-button">delete</button>
-                  </div>
-                  `;
-
-  board.insertBefore(document.createRange().createContextualFragment(columnSet), columnBtn);
-});
-
-// 컬럼명 변경
-// h2태그
-const titles = document.querySelectorAll('.column-title');
-// 각각의 h2태그에 addEventListener 호출
-titles.forEach((title) => {
-  title.addEventListener('click', (e) => {
-    // 현재 사용중인 제목 변수처리
-    const useTitle = title.textContent;
-    // 각 제목의 html 형식을 input 태그로 바꿔주고, value 값에 할당 변수 사용
-    title.innerHTML = `<input type="text" value="${useTitle}" class="edit-input">`;
-
-    const inputTag = title.querySelector('.edit-input');
-    inputTag.focus();
-    // 커서위치 맨 뒤로
-    inputTag.selectionStart = useTitle.length;
-
-    inputTag.addEventListener('blur', (e) => {
-      // console.log(e.target);
-      // if (e.target !== inputTag) {
-      //   title.innerHTML = `<h2 class="column-title">${useTitle}</h2>`;
-      window.location.reload();
-      // }
-    });
-
-    inputTag.addEventListener('keydown', async (e) => {
-      // boardId
-      const params = new URLSearchParams(window.location.search);
-      const boardId = params.get('boardId');
-      // columnId
-      const columnId = e.target.parentNode.parentNode.id;
-
-      try {
-        if (e.key === 'Enter') {
-          const columnName = inputTag.value;
-
-          const changeColumnNameResponse = await fetch(`/api/boards/${boardId}/columns/${columnId}`, {
-            method: 'PUT',
-            headers: {
-              authorization:
-                'Bearer' +
-                'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjE0LCJpYXQiOjE2OTE1NzA4MzEsImV4cCI6MTY5MTU3MTczMX0.GiHIRzWu0mn3SQ5fL18LwJCA0M-aSijncyPFoiVKnEA',
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ columnName }),
-          });
-
-          await changeColumnNameResponse.json().then((result) => {
-            return result.errorMessage ? alert(result.errorMessage) : alert(result.message);
-          });
-        }
-      } catch (err) {
-        console.log(err);
-        return alert('컬럼명 변경에 실패하였습니다.');
-      }
-    });
-  });
-});
-
-// 컬럼 삭제
-// 컬럼삭제 버튼태그 가져오고,
-const deleteButtons = document.querySelectorAll('.delete-column-button');
-deleteButtons.forEach((deleteBtn) => {
-  deleteBtn.addEventListener('click', async (e) => {
-    // boardId
-    const params = new URLSearchParams(window.location.search);
-    const boardId = params.get('boardId');
-    // columnId
-    const columnId = e.target.parentNode.id;
-
-    try {
-      const deleteResponse = await fetch(`/api/boards/${boardId}/columns/${columnId}`, {
-        method: 'DELETE',
-        headers: {
-          authorization:
-            'Bearer' +
-            'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEzLCJpYXQiOjE2OTE1NjM3MDEsImV4cCI6MTY5MTU2NDYwMX0.dxFgAuhkYxAHKNRTRA0HAbgH_gq0vw4b-Kn8OTDB7ks',
-          'Content-Type': 'application/json',
-        },
-      });
-      await deleteResponse.json().then((result) => {
-        result.errorMessage ? alert(result.errorMessage) : alert(result.message);
-      });
-    } catch (err) {
-      console.log(err);
-      return alert('컬럼 삭제에 실패하였습니다.');
-    }
-  });
 });

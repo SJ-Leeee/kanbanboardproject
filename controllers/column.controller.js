@@ -9,7 +9,7 @@ class ColumnController {
     const { columnName } = req.body;
     try {
       const createColumnData = await this.columnService.createColumn(boardId, columnName);
-      res.status(201).json({ data: createColumnData });
+      res.status(201).json({ message: `${columnName} 컬럼이 추가되었습니다.`, data: createColumnData });
     } catch (err) {
       if (err.code) res.status(err.code).json({ errorMessage: err.data });
       console.log(err);
