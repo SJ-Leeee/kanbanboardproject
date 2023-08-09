@@ -22,7 +22,6 @@ document.addEventListener('DOMContentLoaded', async (e) => {
     // fetch로 받아온 data 가공
     await getColumnResponse.json().then((result) => {
       result.data.forEach((data) => {
-        console.log(data);
         // HTML 세팅
         const columnSet = `
                           <div class="column" id="${data.id}">
@@ -41,13 +40,37 @@ document.addEventListener('DOMContentLoaded', async (e) => {
         return alert(result.errorMessage);
       }
     });
+
+    // 컬럼 삭제
+    const deleteButtons = document.querySelectorAll('.delete-column-button');
+    deleteButtons.forEach((deleteBtn) => {
+      deleteBtn.addEventListener('click', async (e) => {
+        // columnId
+        const columnId = e.target.parentNode.id;
+        // accessToken
+        const accessToken = localStorage.getItem('accessToken');
+        // 컬럼삭제 API fetch
+        const deleteResponse = await fetch(`/api/boards/${boardId}/columns/${columnId}`, {
+          method: 'DELETE',
+          headers: {
+            authorization: `Bearer ${accessToken}`,
+            'Content-Type': 'application/json',
+          },
+        });
+        // fetch로 받아온 data 가공
+        await deleteResponse.json().then((result) => {
+          result.errorMessage ? alert(result.errorMessage) : alert(result.message);
+          window.location.reload();
+        });
+      });
+    });
+
     // 컬럼명 변경
     const h2Tag = document.querySelectorAll('.column-title');
     h2Tag.forEach((title) => {
       title.addEventListener('click', (e) => {
         // 현재 사용중인 제목 변수처리
         const useTitle = title.textContent;
-        console.log(useTitle); // OK
         // 각 제목의 html 형식을 input 태그로 바꿔주고, value 값에 할당 변수 사용
         title.innerHTML = `<input type="text" value="${useTitle}" class="edit-input">`;
 
@@ -139,36 +162,4 @@ columnBtn.addEventListener('click', async () => {
     console.log(err.message);
     return alert('컬럼 생성에 실패하였습니다.');
   }
-});
-
-// 컬럼 삭제
-// 컬럼삭제 버튼태그 가져오고,
-const deleteButtons = document.querySelectorAll('.delete-column-button');
-deleteButtons.forEach((deleteBtn) => {
-  deleteBtn.addEventListener('click', async (e) => {
-    // boardId
-    const params = new URLSearchParams(window.location.search);
-    const boardId = params.get('boardId');
-    // columnId
-    const columnId = e.target.parentNode.id;
-    // accessToken
-    const accessToken = localStorage.getItem('accessToken');
-    // 컬럼삭제 API fetch
-    try {
-      const deleteResponse = await fetch(`/api/boards/${boardId}/columns/${columnId}`, {
-        method: 'DELETE',
-        headers: {
-          authorization: `Bearer ${accessToken}`,
-          'Content-Type': 'application/json',
-        },
-      });
-      // fetch로 받아온 data 가공
-      await deleteResponse.json().then((result) => {
-        result.errorMessage ? alert(result.errorMessage) : alert(result.message);
-      });
-    } catch (err) {
-      console.log(err);
-      return alert('컬럼 삭제에 실패하였습니다.');
-    }
-  });
 });
