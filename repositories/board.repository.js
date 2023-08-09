@@ -9,7 +9,7 @@ class BoardRepository {
   };
   findBoardById = async (boardId) => {
     return await Boards.findOne({
-      attributes: ['boardName', 'createdAt'],
+      attributes: ['boardName', 'createdAt', 'userId'],
       include: [
         {
           model: Users,

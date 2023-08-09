@@ -2,20 +2,17 @@
 const board = document.querySelector('.board');
 // create-column button tag
 const columnBtn = document.querySelector('#columnBtn');
-
+const accessToken = localStorage.getItem('accessToken');
 // 컬럼생성 버튼 클릭 시 이벤트리스너 호출
 columnBtn.addEventListener('click', async () => {
-  const boardId = 21;
+  const boardId = 24; // 여기서 param
   const columnName = prompt('생성할 컬럼명을 입력해주세요.');
-
+  console.log(columnName);
   try {
     const createResponse = await fetch(`/api/boards/${boardId}/columns`, {
       method: 'POST',
       headers: {
-        authorization:
-          'Bearer ' +
-          'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjE0LCJpYXQiOjE2OTE1NzA4MzEsImV4cCI6MTY5MTU3MTczMX0.GiHIRzWu0mn3SQ5fL18LwJCA0M-aSijncyPFoiVKnEA',
-        'Content-Type': 'application/json',
+        Authorization: `Bearer ${accessToken}`,
       },
       body: JSON.stringify({ columnName }),
     });

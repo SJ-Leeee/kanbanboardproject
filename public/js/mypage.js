@@ -106,18 +106,56 @@ async function openModal(boardId, event) {
   };
 
   // 삭제 버튼 클릭 시 동작
-  deleteButton.onclick = function () {
-    // 삭제 버튼 클릭 시 동작을 여기에 추가
+  deleteButton.onclick = async function () {
+    const confirmation = confirm('정말 삭제하시겠습니까?');
+    if (confirmation) {
+      try {
+        const response = await fetch(`/api/board/${boardId}`, {
+          method: 'DELETE',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${accessToken}`,
+          },
+        });
+        if (response.ok) {
+          alert('삭제가 완료되었습니다.');
+        } else {
+          const responseData = await response.json();
+          alert(responseData.err);
+        }
+      } catch (err) {
+        console.log(err);
+      }
+    } else {
+      closeModal();
+    }
   };
 
   // 저장 버튼 클릭 시 동작
-  saveButton.onclick = function () {
+  saveButton.onclick = async function () {
     // 수정된 정보 저장 및 처리
-    const editedData = {
-      boardName: boardNameInput.value,
-      boardDesc: boardDescInput.value,
-      boardColor: boardColorSelect.value,
-    };
+    try {
+      const response = await fetch(`/api/board/${boardId}`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${accessToken}`,
+        },
+        body: JSON.stringify({
+          boardName: boardNameInput.value,
+          boardDesc: boardDescInput.value,
+          boardColor: boardColorSelect.value,
+        }),
+      });
+      if (response.ok) {
+        alert('수정이 완료되었습니다.');
+      } else {
+        const responseData = await response.json();
+        alert(responseData.err);
+      }
+    } catch (err) {
+      console.log(err);
+    }
     editForm.style.display = 'none';
   };
 }
@@ -125,6 +163,8 @@ async function openModal(boardId, event) {
 // 모달창 닫기
 function closeModal() {
   const modal = document.getElementById('myModal');
+  const editForm = document.getElementById('editForm');
+  editForm.style.display = 'none';
   modal.style.display = 'none';
 }
 
