@@ -22,9 +22,10 @@ document.addEventListener('DOMContentLoaded', async (e) => {
     // fetch로 받아온 data 가공
     await getColumnResponse.json().then((result) => {
       result.data.forEach((data) => {
+        console.log(data);
         // HTML 세팅
         const columnSet = `
-                          <div class="column" id="${data.columnName}-column">
+                          <div class="column" id="${data.id}">
                             <h2 class="column-title">${data.columnName}</h2>
                             <div class="card">Card 1</div>
                             <div class="card">Card 2</div>
@@ -39,6 +40,57 @@ document.addEventListener('DOMContentLoaded', async (e) => {
       if (result.errorMessage) {
         return alert(result.errorMessage);
       }
+    });
+    // 컬럼명 변경
+    const h2Tag = document.querySelectorAll('.column-title');
+    h2Tag.forEach((title) => {
+      title.addEventListener('click', (e) => {
+        // 현재 사용중인 제목 변수처리
+        const useTitle = title.textContent;
+        console.log(useTitle); // OK
+        // 각 제목의 html 형식을 input 태그로 바꿔주고, value 값에 할당 변수 사용
+        title.innerHTML = `<input type="text" value="${useTitle}" class="edit-input">`;
+
+        const inputTag = title.querySelector('.edit-input');
+        inputTag.focus();
+        // 커서위치 맨 뒤로
+        inputTag.selectionStart = useTitle.length;
+        // 포커스를 벗어날 시 기존 제목으로 변경
+        inputTag.addEventListener('blur', (e) => {
+          // console.log(e.target);
+          // if (e.target !== inputTag) {
+          //   title.innerHTML = `<h2 class="column-title">${useTitle}</h2>`;
+          // window.location.reload();
+          // }
+        });
+
+        inputTag.addEventListener('keydown', async (e) => {
+          // columnId
+          const columnId = e.target.parentNode.parentNode.id;
+          // accessToken
+          const accessToken = localStorage.getItem('accessToken');
+          // 컬럼명 변경 API fetch
+
+          if (e.key === 'Enter') {
+            const columnName = inputTag.value;
+
+            const changeColumnNameResponse = await fetch(`/api/boards/${boardId}/columns/${columnId}`, {
+              method: 'PUT',
+              headers: {
+                authorization: `Bearer ${accessToken}`,
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({ columnName }),
+            });
+            // fetch로 받아온 data 가공
+            await changeColumnNameResponse.json().then((result) => {
+              h2Tag.innerHTML = `<h2 class="column-title">${columnName}</h2>`;
+              result.errorMessage ? alert(result.errorMessage) : alert(result.message);
+              window.location.reload();
+            });
+          }
+        });
+      });
     });
   } catch (err) {
     console.log(err);
@@ -69,7 +121,7 @@ columnBtn.addEventListener('click', async () => {
     await createResponse.json().then((result) => {
       // HTML 세팅
       const columnSet = `
-                        <div class="column" id="${result.data.columnName}-column">
+                        <div class="column" id="${result.data.id}">
                           <h2 class="column-title">${result.data.columnName}</h2>
                           <div class="card">Card 1</div>
                           <div class="card">Card 2</div>
@@ -79,72 +131,14 @@ columnBtn.addEventListener('click', async () => {
                         `;
       // HTML 화면에 띄우기
       board.insertBefore(document.createRange().createContextualFragment(columnSet), columnBtn);
-      // 오류 출력
-      result.errorMessage ? alert(result.errorMessage) : alert(`${columnName}으로 컬럼이 생성되었습니다.`);
+      // 메시지 출력
+      result.errorMessage ? alert(result.errorMessage) : alert(result.message);
+      window.location.reload();
     });
   } catch (err) {
     console.log(err.message);
     return alert('컬럼 생성에 실패하였습니다.');
   }
-});
-
-// 컬럼명 변경
-const h2Tag = document.querySelectorAll('.column-title');
-h2Tag.forEach((title) => {
-  title.addEventListener('click', (e) => {
-    // 현재 사용중인 제목 변수처리
-    const useTitle = title.textContent;
-    console.log(useTitle); // OK
-    // 각 제목의 html 형식을 input 태그로 바꿔주고, value 값에 할당 변수 사용
-    title.innerHTML = `<input type="text" value="${useTitle}" class="edit-input">`;
-
-    const inputTag = title.querySelector('.edit-input');
-    inputTag.focus();
-    // 커서위치 맨 뒤로
-    inputTag.selectionStart = useTitle.length;
-    // 포커스를 벗어날 시 기존 제목으로 변경
-    inputTag.addEventListener('blur', (e) => {
-      // console.log(e.target);
-      // if (e.target !== inputTag) {
-      //   title.innerHTML = `<h2 class="column-title">${useTitle}</h2>`;
-      window.location.reload();
-      // }
-    });
-
-    inputTag.addEventListener('keydown', async (e) => {
-      // boardId
-      const params = new URLSearchParams(window.location.search);
-      const boardId = params.get('boardId');
-      // columnId
-      const columnId = e.target.parentNode.parentNode.id;
-      // accessToken
-      const accessToken = localStorage.getItem('accessToken');
-      // 컬럼명 변경 API fetch
-      try {
-        if (e.key === 'Enter') {
-          const columnName = inputTag.value;
-
-          const changeColumnNameResponse = await fetch(`/api/boards/${boardId}/columns/${columnId}`, {
-            method: 'PUT',
-            headers: {
-              authorization: `Bearer ${accessToken}`,
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ columnName }),
-          });
-          // fetch로 받아온 data 가공
-          await changeColumnNameResponse.json().then((result) => {
-            h2Tag.innerHTML = `<h2 class="column-title">${columnName}</h2>`;
-            return result.errorMessage ? alert(result.errorMessage) : alert(result.message);
-            // window.location.reload();
-          });
-        }
-      } catch (err) {
-        console.log(err);
-        return alert('컬럼명 변경에 실패하였습니다.');
-      }
-    });
-  });
 });
 
 // 컬럼 삭제
