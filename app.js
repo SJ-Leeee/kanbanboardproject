@@ -4,6 +4,9 @@ const port = 3000;
 const path = require('path');
 const cookieParser = require('cookie-parser');
 const commentsRouter = require('./routes/card_detail.route');
+
+const cardsRouter = require('./routes/card.route');
+
 const authRouter = require('./routes/auth.route');
 const columnRouter = require('./routes/column.route.js');
 const boardRoute = require('./routes/board.route');
@@ -25,7 +28,7 @@ redisClient.on('error', (error) => {
 app.use(express.json());
 app.use(cookieParser());
 
-app.use('/api', [authRouter, boardRoute, columnRouter, commentsRouter]);
+app.use('/api', [authRouter, boardRoute, columnRouter, commentsRouter, cardsRouter]);
 
 app.use(express.static(path.join(__dirname, 'public')));
 

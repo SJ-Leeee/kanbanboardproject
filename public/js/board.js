@@ -1,5 +1,3 @@
-/** 컬럼기능 관리 로직 */
-
 // main tag
 const board = document.querySelector('.board');
 // create-column button tag
