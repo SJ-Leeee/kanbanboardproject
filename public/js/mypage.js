@@ -1,20 +1,72 @@
 const myBoardList = document.querySelector('#myBoards');
 const invitedBoardList = document.querySelector('#invitedBoards');
-// accessToken
-function getCookieValue(cookieName) {
-  const cookies = document.cookie;
-  const cookieArray = cookies.split(';');
+const accessToken = getCookieValue('access_token');
+const addBoardBtn = document.querySelector('#addBoardButton');
+const inviteUserModal = document.getElementById('inviteUserModal');
+const availableUsersList = document.getElementById('availableUsersList');
+const invitedUsersList = document.getElementById('invitedUsersList');
 
-  for (const cookie of cookieArray) {
-    const [name, value] = cookie.trim().split('=');
-    if (name === cookieName) {
-      return value;
+inviteUserToBoard.addEventListener('click', async () => {
+  await openInviteUserModal();
+});
+
+async function openInviteUserModal() {
+  try {
+    const response = await fetch('/api/users', {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+    if (response.ok) {
+      const data = await response.json();
+      renderAvailableUsers(data.data);
+      inviteUserModal.style.display = 'block';
+    } else {
+      const responseData = await response.json();
+      alert(responseData.err);
     }
+  } catch (error) {
+    console.error('오류 발생:', error);
   }
-  return null;
 }
 
-const accessToken = getCookieValue('access_token');
+function renderAvailableUsers(users) {
+  availableUsersList.innerHTML = ''; // 목록 초기화
+  users.forEach((user) => {
+    const userItem = document.createElement('div');
+    userItem.className = 'user-item';
+    userItem.innerHTML = `
+      <span>${user.userName}</span>
+      <button class="invite-button" onclick="inviteUser(${user.id}, ${user.userName})">+</button>
+    `;
+    availableUsersList.appendChild(userItem);
+  });
+}
+
+async function inviteUser(userId, userName) {
+  const invitedUserItem = document.createElement('div');
+  invitedUserItem.className = 'invited-user';
+  invitedUserItem.setAttribute('data-user-id', userId);
+  invitedUserItem.innerHTML = `
+    <span>${userName}</span>
+    <button class="remove-button" onclick="removeInvitedUser('${userId}')">-</button>
+  `;
+  invitedUsersList.appendChild(invitedUserItem);
+}
+
+function removeInvitedUser(userId) {
+  const userToRemove = invitedUsersList.querySelector(`.invited-user[data-user-id="${userId}"]`);
+  if (userToRemove) {
+    invitedUsersList.removeChild(userToRemove);
+  }
+}
+
+function closeInviteUserModal() {
+  inviteUserModal.style.display = 'none';
+  availableUsersList.innerHTML = '';
+  invitedUsersList.innerHTML = '';
+}
 
 document.addEventListener('DOMContentLoaded', async () => {
   if (!accessToken) {
@@ -34,12 +86,59 @@ document.addEventListener('DOMContentLoaded', async () => {
       const data = await response.json();
       renderBoards(data);
     } else {
-      // 로그인이 실패했을 때 처리
-      console.error('Login failed');
+      const responseData = await response.json();
+      alert(responseData.err);
     }
   } catch (error) {
     console.error('An error occurred:', error);
   }
+});
+addBoardBtn.addEventListener('click', async () => {
+  const addBoardModal = document.querySelector('#addBoardModal');
+  const close = document.querySelector('#close');
+  const addBoardNameInput = document.querySelector('#addBoardNameInput');
+  const addBoardDescInput = document.querySelector('#addBoardDescInput');
+  const addBoardColorSelect = document.querySelector('#addBoardColorSelect');
+  const addButton = document.querySelector('#addButton');
+  const cancleButton = document.querySelector('#cancleButton');
+  console.log(accessToken);
+
+  addBoardModal.style.display = 'block';
+
+  close.onclick = function () {
+    addBoardModal.style.display = 'none';
+  };
+
+  cancleButton.onclick = function () {
+    addBoardModal.style.display = 'none';
+  };
+
+  addButton.onclick = async function () {
+    try {
+      const response = await fetch(`/api/board`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${accessToken}`,
+        },
+        body: JSON.stringify({
+          boardName: addBoardNameInput.value,
+          boardDesc: addBoardDescInput.value,
+          boardColor: addBoardColorSelect.value,
+        }),
+      });
+      if (response.ok) {
+        data = await response.json();
+        alert(data.message);
+        location.reload();
+      } else {
+        const responseData = await response.json();
+        alert(responseData.err);
+      }
+    } catch (error) {
+      console.error('An error occurred:', error);
+    }
+  };
 });
 
 function renderBoards(data) {
@@ -64,12 +163,11 @@ function renderBoards(data) {
   myBoardList.insertAdjacentHTML('beforeend', temp_html);
   invitedBoardList.insertAdjacentHTML('beforeend', temp_html_v2);
 }
-// html 삽입
-
 async function openModal(boardId, event) {
   // 모달창 요소 가져오기
   event.stopPropagation();
   const modal = document.getElementById('myModal');
+  const boardNameSpan = document.getElementById('boardNameSpan');
   const headUserSpan = document.getElementById('headUserSpan');
   const invitedUsersSpan = document.getElementById('invitedUsersSpan');
   const createdAtSpan = document.getElementById('createdAtSpan');
@@ -81,6 +179,7 @@ async function openModal(boardId, event) {
   const boardColorSelect = document.getElementById('boardColorSelect');
   const saveButton = document.getElementById('saveButton');
   const cancelButton = document.getElementById('cancelButton');
+  const inviteUserToBoard = document.getElementById('inviteUserToBoard');
 
   let data;
   try {
@@ -102,6 +201,7 @@ async function openModal(boardId, event) {
   const boardData = data.data;
   const userNamesArr = boardData.InvitedUsers.map((user) => user.User.userName);
 
+  boardNameSpan.textContent = boardData.boardName;
   headUserSpan.textContent = boardData.User.userName;
   invitedUsersSpan.textContent = userNamesArr.join(', ');
   createdAtSpan.textContent = boardData.createdAt;
@@ -133,6 +233,7 @@ async function openModal(boardId, event) {
         });
         if (response.ok) {
           alert('삭제가 완료되었습니다.');
+          location.reload();
         } else {
           const responseData = await response.json();
           alert(responseData.err);
@@ -163,6 +264,7 @@ async function openModal(boardId, event) {
       });
       if (response.ok) {
         alert('수정이 완료되었습니다.');
+        location.reload();
       } else {
         const responseData = await response.json();
         alert(responseData.err);
@@ -188,4 +290,17 @@ function redirectToAuthPage() {
 
 function redirectToBoardPage(boardId) {
   window.location.href = `/html/board.html?boardId=${boardId}`; // 해당 Board 페이지로 이동
+}
+
+function getCookieValue(cookieName) {
+  const cookies = document.cookie;
+  const cookieArray = cookies.split(';');
+
+  for (const cookie of cookieArray) {
+    const [name, value] = cookie.trim().split('=');
+    if (name === cookieName) {
+      return value;
+    }
+  }
+  return null;
 }

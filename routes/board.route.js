@@ -13,4 +13,7 @@ router.patch('/board/:boardId', authmiddleware.authenticateAccessToken, boardCon
 router.delete('/board/:boardId', authmiddleware.authenticateAccessToken, boardController.deleteBoard);
 router.post('/board/:boardId/user', authmiddleware.authenticateAccessToken, boardController.addUserToBoard);
 
+// 유저데이터
+router.get('/users', boardController.getAllUsers);
+
 module.exports = router;

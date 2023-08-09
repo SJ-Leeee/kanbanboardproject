@@ -80,5 +80,15 @@ class BoardController {
       return res.status(err.status).json({ err: err.message });
     }
   };
+  getAllUsers = async (req, res) => {
+    try {
+      const result = await this.boardService.getAllUsers();
+      if (result.data) return res.status(result.code).json({ data: result.data });
+      return res.status(result.code).json({ message: result.message });
+    } catch (err) {
+      console.log(err);
+      return res.status(err.status).json({ err: err.message });
+    }
+  };
 }
 module.exports = BoardController;
