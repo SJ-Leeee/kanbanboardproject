@@ -5,7 +5,8 @@ const boardController = new BoardController();
 const Authmiddleware = require('../middlewares/auth.middleware');
 const authmiddleware = new Authmiddleware();
 
-router.post('/board', authmiddleware.authenticateAccessToken, boardController.createBoard);
+router.post('/board', authmiddleware.authenticateAccessToken, boardController.createBoard); // 1개를 추가하는게
+// 자원을 의미
 router.get('/board/:boardId', boardController.getBoard);
 router.get('/boards', authmiddleware.authenticateAccessToken, boardController.getMyBoards);
 router.patch('/board/:boardId', authmiddleware.authenticateAccessToken, boardController.updateBoard);
