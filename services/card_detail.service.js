@@ -5,7 +5,7 @@ const { CustomError } = require('../_utills/customClass');
 class CardDetailService {
   cardDetailRepository = new CardDetailRepository();
 
-  /**@댓글생성부분 */ //UserId 나중에 추가
+  /**@댓글생성부분 */
   createComment = async ({ commentText, cardId, userId }) => {
     // cardId 제약조건 오류가 발생하여서  cardId의 유효성검사를 하기위해 코드 추가. (10~17번째줄)
     const isCardIdValid = async (cardId) => {
@@ -18,7 +18,6 @@ class CardDetailService {
     // ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
     if (!userId) throw new CustomError('Id를 찾을수 없습니다. 로그인을 해주세요!', 412);
     if (!commentText) throw new CustomError('텍스트를 입력해주세요', 412);
-
     const comment = await this.cardDetailRepository.createComment({
       // repository에 있는 createComment에 comment변수값들 저장
       cardId: cardId,

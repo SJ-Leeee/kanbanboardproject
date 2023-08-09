@@ -24,7 +24,7 @@ const addCardsToColumns = () => {
     // 컬럼에 카드를 추가하는 버튼을 생성하여 컬럼에 추가합니다.
     const addCardButton = document.createElement('button');
     addCardButton.classList.add('add-card-button');
-    addCardButton.textContent = 'Add Card';
+    addCardButton.textContent = '카드등록';
     column.appendChild(addCardButton);
 
     // 카드 추가 버튼에 이벤트 리스너를 등록합니다.
