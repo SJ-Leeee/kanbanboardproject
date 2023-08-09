@@ -32,7 +32,6 @@ class BoardService {
   };
 
   updateBoard = async (userId, boardId, boardName, boardDesc, boardColor) => {
-    // 보드 생성
     try {
       if (!boardName) throw new CustomError('보드 양식이 올바르지 않습니다.', 412);
       const exBoard = await this.boardRepository.findBoardById(boardId);
@@ -47,7 +46,6 @@ class BoardService {
     }
   };
   deleteBoard = async (userId, boardId) => {
-    // 보드 생성
     try {
       const exBoard = await this.boardRepository.findBoardById(boardId);
       if (!exBoard) throw new CustomError('보드가 존재하지 않습니다.', 403);
@@ -61,11 +59,11 @@ class BoardService {
     }
   };
   addUserToBoard = async (userId, boardId, addUserId) => {
-    // 보드 생성
     try {
       const exBoard = await this.boardRepository.findBoardById(boardId);
       if (!exBoard) throw new CustomError('보드가 존재하지 않습니다.', 403);
-      if (exBoard.userId !== userId) throw new CustomError('변경 권한이 존재하지 않습니다.', 401);
+      if (exBoard.userId !== userId) throw new CustomError('유저 추가 권한이 존재하지 않습니다.', 401);
+      if (userId === addUserId) throw new CustomError(`본인을 초대할 수 없습니다.`, 409);
 
       const exUser = await this.boardRepository.findUserById(addUserId);
       if (!exUser) throw new CustomError(`해당 유저가 존재하지 않습니다.`, 409);
@@ -75,6 +73,17 @@ class BoardService {
       await this.boardRepository.addUserToBoard(boardId, addUserId);
 
       return { code: 200, message: `정상적으로 추가되었습니다.` };
+    } catch (error) {
+      throw error;
+    }
+  };
+  getMyBoards = async (userId) => {
+    try {
+      const myBoards = await this.boardRepository.findAllBoardByUserId(userId);
+
+      // const exBoard = await this.boardRepository.findBoardById(boardId);
+      // if (!exBoard) throw new CustomError('작성된 보드가 없어 조회에 실패하였습니다.', 403);
+      return { code: 200, data: myBoards };
     } catch (error) {
       throw error;
     }

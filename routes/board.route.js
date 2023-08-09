@@ -7,6 +7,7 @@ const authmiddleware = new Authmiddleware();
 
 router.post('/board', authmiddleware.authenticateAccessToken, boardController.createBoard);
 router.get('/board/:boardId', boardController.getBoard);
+router.get('/boards', authmiddleware.authenticateAccessToken, boardController.getMyBoards);
 router.patch('/board/:boardId', authmiddleware.authenticateAccessToken, boardController.updateBoard);
 router.delete('/board/:boardId', authmiddleware.authenticateAccessToken, boardController.deleteBoard);
 router.post('/board/:boardId/user', authmiddleware.authenticateAccessToken, boardController.addUserToBoard);

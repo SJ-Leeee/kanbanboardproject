@@ -30,6 +30,20 @@ class BoardRepository {
   findUserById = async (addUserId) => {
     return await Users.findOne({ where: { id: addUserId } });
   };
+
+  findAllBoardByUserId = async (userId) => {
+    const InvitedBoards = await InvitedUsers.findAll({
+      attributes: [],
+      include: [
+        {
+          model: Boards,
+        },
+      ],
+      where: { userId },
+    });
+    const myBoards = await Boards.findAll({ where: { userId } });
+    return { InvitedBoards, myBoards };
+  };
 }
 
 module.exports = BoardRepository;
