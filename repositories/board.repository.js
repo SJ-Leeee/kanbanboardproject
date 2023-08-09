@@ -8,7 +8,26 @@ class BoardRepository {
     return await Boards.create({ userId, boardName, boardDesc, boardColor });
   };
   findBoardById = async (boardId) => {
-    return await Boards.findOne({ where: { id: boardId } });
+    return await Boards.findOne({
+      attributes: ['boardName', 'createdAt'],
+      include: [
+        {
+          model: Users,
+          attributes: ['userName'],
+        },
+        {
+          model: InvitedUsers,
+          attributes: ['userId'],
+          include: [
+            {
+              model: Users,
+              attributes: ['userName'],
+            },
+          ],
+        },
+      ],
+      where: { id: boardId },
+    });
   };
   updateBoard = async (boardId, boardName, boardDesc, boardColor) => {
     await Boards.update({ boardName, boardDesc, boardColor }, { where: { id: boardId } });

@@ -126,6 +126,9 @@
         display: block;
         margin-top: 5px;
       }
+      .edit-form {
+        display: none;
+      }
     </style>
   </head>
   <body>
@@ -142,6 +145,8 @@
         <h1>Invited Boards</h1>
         <!-- 추가적인 board-box 요소들을 여기에 추가할 수 있습니다 -->
       </div>
+      <!-- mypage.html -->
+      <!-- ... 이전 코드 ... -->
       <div id="myModal" class="modal">
         <div class="modal-content">
           <span class="close" onclick="closeModal()">&times;</span>
@@ -151,8 +156,21 @@
           <p>Created At: <span id="createdAtSpan"></span></p>
           <button id="editButton">Edit</button>
           <button id="deleteButton">Delete</button>
+          <div id="editForm" class="edit-form">
+            <h3>Edit Board</h3>
+            <input type="text" id="boardNameInput" placeholder="Board Name" />
+            <input type="text" id="boardDescInput" placeholder="Board Description" />
+            <select id="boardColorSelect">
+              <option value="color1">Color 1</option>
+              <option value="color2">Color 2</option>
+              <!-- ... 기타 색상 옵션 ... -->
+            </select>
+            <button id="saveButton">Save</button>
+            <button id="cancelButton">Cancel</button>
+          </div>
         </div>
       </div>
+      <!-- ... 이후 코드 ... -->
     </main>
     <script src="../js/mypage.js"></script>
   </body>
