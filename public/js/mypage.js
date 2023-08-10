@@ -114,7 +114,10 @@ document.addEventListener('DOMContentLoaded', async () => {
       renderBoards(data);
     } else {
       const responseData = await response.json();
-      window.location.href = '/';
+      if (responseData.message === '액세스 토큰 오류') {
+        window.location.href = '/';
+      }
+      alert(responseData.err);
     }
   } catch (error) {
     console.error('An error occurred:', error);
