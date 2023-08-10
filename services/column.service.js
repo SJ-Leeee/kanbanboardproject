@@ -16,7 +16,6 @@ class ColumnService {
       boardId: createColumnData.boardId,
       columnName: createColumnData.columnName,
       location: createColumnData.location,
-      location: createColumnData.location,
       createdAt: createColumnData.createdAt,
       updatedAt: createColumnData.updatedAt,
     };
@@ -57,10 +56,8 @@ class ColumnService {
     // 반환값
     return {
       id: columnId,
-      id: columnId,
       boardId: boardId,
       columnName: updateColumnData.columnName,
-      location: updateColumnData.location,
       location: updateColumnData.location,
       createdAt: updateColumnData.createdAt,
       updatedAt: updateColumnData.updatedAt,
