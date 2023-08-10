@@ -178,6 +178,10 @@ columnBtn.addEventListener('click', async () => {
   const accessToken = getCookieValue('access_token');
   // 생성 columnName
   const columnName = prompt('생성할 컬럼명을 입력해주세요.');
+  // 취소버튼 클릭시 alert메시지
+  if (columnName === null) {
+    return alert('컬럼 생성을 취소하였습니다.');
+  }
   // 컬럼생성 API fetch
   try {
     const createResponse = await fetch(`/api/boards/${boardId}/columns`, {
