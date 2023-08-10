@@ -9,7 +9,7 @@ class BoardRepository {
   };
   findBoardById = async (boardId) => {
     return await Boards.findOne({
-      attributes: ['boardName', 'createdAt'],
+      attributes: ['id', 'boardName', 'createdAt', 'userId'],
       include: [
         {
           model: Users,
@@ -62,6 +62,26 @@ class BoardRepository {
     });
     const myBoards = await Boards.findAll({ where: { userId } });
     return { invitedBoards, myBoards };
+  };
+  getAllUsers = async () => {
+    const users = await Users.findAll({
+      attributes: ['id', 'userName'],
+    });
+    return users;
+  };
+
+  getUserInBoard = async (boardId) => {
+    const users = await InvitedUsers.findAll({
+      attributes: [],
+      include: [
+        {
+          model: Users,
+          attributes: ['id', 'userName'],
+        },
+      ],
+      where: { boardId },
+    });
+    return users;
   };
 }
 
