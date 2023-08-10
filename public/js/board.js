@@ -29,26 +29,55 @@ document.addEventListener('DOMContentLoaded', async (e) => {
         'Content-Type': 'application/json',
       },
     });
-    // fetch로 받아온 data 가공
-    await getColumnResponse.json().then((result) => {
-      result.data.forEach((data) => {
-        // HTML 세팅
-        const columnSet = `
-                          <div class="column" draggable="true" id="${data.id}">
-                            <h2 class="column-title">${data.columnName}</h2>
-                            <div class="card">Card 1</div>
-                            <div class="card">Card 2</div>
-                            <button class="add-card-button">Add Card</button>
-                            <button class="delete-column-button">delete</button>
-                          </div>
-                          `;
-        // 화면에 HTML 띄우기
-        board.insertBefore(document.createRange().createContextualFragment(columnSet), columnBtn);
+    // fetch로 받아온 data 제이슨화
+    const getColumnData = await getColumnResponse.json();
+    // 가공한 데이터 location의 내림차순으로 정렬해서 할당
+    const descColumn = getColumnData.data.sort((a, b) => {
+      a.location - b.location;
+    });
+    // 정렬데이터 가공
+    descColumn.forEach((data) => {
+      // HTML 세팅
+      const columnSet = `
+                        <div class="column" draggable="true" id="${data.id}">
+                          <h2 class="column-title" id="${data.location}">${data.columnName}</h2>
+                          <div class="card">Card 1</div>
+                          <button id="cardBtn">카드 조회</button>
+                          <button class="add-card-button">Add Card</button>
+                          <button class="delete-column-button">delete</button>
+                        </div>
+                        `;
+      // 화면에 HTML 띄우기
+      board.insertBefore(document.createRange().createContextualFragment(columnSet), columnBtn);
+    });
+    // 오류 출력
+    if (getColumnData.errorMessage) {
+      return alert(getColumnData.errorMessage);
+    }
+
+    // 카드 조회
+    document.querySelector('#cardBtn').addEventListener('click', async (e) => {
+      const columnId = e.target.parentNode.id;
+      const getCardsData = await fetch(`/api/cards/${columnId}`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${accessToken}`,
+        },
       });
-      // 오류 출력
-      if (result.errorMessage) {
-        return alert(result.errorMessage);
-      }
+      await getCardsData.json().then((result) => {
+        console.log(result.data);
+        result.data.forEach((a) => {
+          document.querySelector('.card-list').innerHTML += `
+                                                            <h2>${a.cardName}</h2>
+                                                            <p>${a.cardDesc}</p>
+                                                            <p>${a.cardColor}</p>
+                                                            <p>${a.dueDate}</p>
+                                                            <button class="add-comment-button">댓글추가</button>
+                                                            `;
+        });
+        result.errorMessage ? alert('오류') : alert('조회 성공');
+      });
     });
 
     // 드래그 앤 드랍
@@ -68,6 +97,49 @@ document.addEventListener('DOMContentLoaded', async (e) => {
       e.preventDefault();
       const drag = document.querySelector('.dragging');
       board.appendChild(drag);
+    });
+
+    // 카드 생성
+    const addCardBtnTag = document.querySelectorAll('.add-card-button');
+    addCardBtnTag.forEach((addCardBtn) => {
+      addCardBtn.addEventListener('click', async (e) => {
+        // columnsId
+        const columnId = e.target.parentNode.id;
+        const cardNeed = document.querySelector('.card');
+        cardNeed.innerHTML = `
+                              <input type="text" value="Card Example" class="card-name-input">
+                              <input type="text" value="카드 예시 입니다." class="card-description-input">
+                              <input type="text" value="핑꾸핑꾸 핫핑쿠쨩" class="card-color-input">
+                              <input type="text" value="1" class="assignee-input">
+                             `;
+        // card needs
+        const cardName = document.querySelector('.card-name-input').value;
+        const cardDesc = document.querySelector('.card-description-input').value;
+        const cardColor = document.querySelector('.card-color-input').value;
+        const assignee = document.querySelector('.assignee-input').value;
+        // addCard 함수호출
+        await addCard(columnId, cardName, cardDesc, cardColor, assignee, accessToken);
+      });
+      // create card fetch
+      async function addCard(columnId, cardName, cardDesc, cardColor, assignee, accessToken) {
+        const response = await fetch(`/api/cards/${columnId}`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${accessToken}`,
+          },
+          body: JSON.stringify({
+            cardName,
+            cardDesc,
+            cardColor,
+            assignee,
+          }),
+        });
+        const cardCreateData = await response.json();
+        cardCreateData.errorMessage ? alert(cardCreateData.errorMessage) : alert(cardCreateData.message);
+
+        window.location.reload();
+      }
     });
 
     // 컬럼 삭제
@@ -163,9 +235,9 @@ columnBtn.addEventListener('click', async () => {
       // HTML 세팅
       const columnSet = `
                         <div class="column" draggable="true" id="${result.data.id}">
-                          <h2 class="column-title">${result.data.columnName}</h2>
+                          <h2 class="column-title" id="${result.data.location}">${result.data.columnName}</h2>
                           <div class="card">Card 1</div>
-                          <div class="card">Card 2</div>
+                          <button id="cardBtn">카드 조회</button>
                           <button class="add-card-button">Add Card</button>
                           <button class="delete-column-button">delete</button>
                         </div>

@@ -19,21 +19,36 @@ class CardController {
       const { code, data } = await this.cardsService.createCard({
         userId,
         columnId,
-        assignee,
+        assignee: userId,
         cardName,
         cardDesc,
         cardColor,
         dueDate: userDueDate,
       });
 
-      return res.status(code).json({ data });
+      return res.status(code).json({ data, message: '카드를 생성하였습니다.' });
     } catch (err) {
-      if (err.code) return res.status(err.code).json({ message: err.data });
+      if (err.code) return res.status(err.code).json({ errorMessage: err.data });
       console.error(err);
-      return res.status(500).json({ message: '오류' });
+      return res.status(500).json({ errorMessage: '오류' });
     }
   };
 
+  // 카드 조회
+  getCard = async (req, res) => {
+    const { columnId } = req.params;
+
+    try {
+      const { code, data } = await this.cardsService.getCard(columnId);
+      console.log(data);
+
+      return res.status(code).json({ data, message: '카드 조회에 성공하였습니다.' });
+    } catch (err) {
+      if (err.code) return res.status(err.code).json({ errorMessage: err.data });
+      console.log(err);
+      return res.status(500).json({ errorMessage: '카드 조회에 실패하였습니다.' });
+    }
+  };
   // 카드 마감일 설정 / 수정
   updateCardDueDate = async (req, res) => {
     try {
