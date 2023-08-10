@@ -21,8 +21,10 @@ class ColumnController {
   getColumn = async (req, res, next) => {
     const { boardId } = req.params;
     try {
-      const columns = await this.columnService.findAllColumn(boardId);
-      res.status(200).json({ data: columns });
+      const data = await this.columnService.findAllColumn(boardId);
+      if (data.length === 0)
+        return res.status(201).json({ message: '현재 생성된 컬럼이 없습니다. 새로운 컬럼을 생성해주세요.' });
+      else res.status(200).json({ data });
     } catch (err) {
       console.log(err);
       res.status(500).json({ errorMessage: '컬럼 조회에 실패하였습니다.' });
