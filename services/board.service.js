@@ -88,5 +88,24 @@ class BoardService {
       throw error;
     }
   };
+
+  getAllUsers = async () => {
+    try {
+      const data = await this.boardRepository.getAllUsers();
+
+      return { code: 200, data };
+    } catch (error) {
+      throw error;
+    }
+  };
+  getUserInBoard = async (boardId) => {
+    try {
+      const data = await this.boardRepository.getUserInBoard(boardId);
+
+      return { code: 200, data };
+    } catch (error) {
+      throw error;
+    }
+  };
 }
 module.exports = BoardService;

@@ -52,6 +52,13 @@ body {
   background-color: #5386b9;
   padding: 10px;
   border-radius: 5px;
+  max-width: 150px;
+  border: 2px dashed #aaa;
+  cursor: move;
+}
+
+.column.dragging {
+  opacity: 0.5;
 }
 
 .add-column-button {

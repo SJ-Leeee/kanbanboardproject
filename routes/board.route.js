@@ -13,4 +13,9 @@ router.patch('/board/:boardId', authmiddleware.authenticateAccessToken, boardCon
 router.delete('/board/:boardId', authmiddleware.authenticateAccessToken, boardController.deleteBoard);
 router.post('/board/:boardId/user', authmiddleware.authenticateAccessToken, boardController.addUserToBoard);
 
+// 유저데이터
+router.get('/users', boardController.getAllUsers);
+// 보드에 추가된 user 조회
+router.get('/board/:boardId/user', boardController.getUserInBoard);
+
 module.exports = router;

@@ -30,6 +30,10 @@ module.exports = (sequelize, DataTypes) => {
         type: Sequelize.INTEGER,
         allowNull: false,
       },
+      location: {
+        defaultValue: 0,
+        type: Sequelize.INTEGER,
+      },
       columnName: {
         type: Sequelize.STRING,
         allowNull: false,
