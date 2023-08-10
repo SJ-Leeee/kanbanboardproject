@@ -34,7 +34,7 @@ document.addEventListener('DOMContentLoaded', async (e) => {
       result.data.forEach((data) => {
         // HTML 세팅
         const columnSet = `
-                          <div class="column" id="${data.id}">
+                          <div class="column" draggable="true" id="${data.id}">
                             <h2 class="column-title">${data.columnName}</h2>
                             <div class="card">Card 1</div>
                             <div class="card">Card 2</div>
@@ -49,6 +49,25 @@ document.addEventListener('DOMContentLoaded', async (e) => {
       if (result.errorMessage) {
         return alert(result.errorMessage);
       }
+    });
+
+    // 드래그 앤 드랍
+    const columns = document.querySelectorAll('.column');
+    columns.forEach((column) => {
+      column.addEventListener('dragstart', (e) => {
+        column.classList.add('dragging');
+        e.dataTransfer.setData('text/plain', column.id);
+      });
+
+      column.addEventListener('dragend', async (e) => {
+        column.classList.remove('dragging');
+      });
+    });
+
+    board.addEventListener('dragover', (e) => {
+      e.preventDefault();
+      const drag = document.querySelector('.dragging');
+      board.appendChild(drag);
     });
 
     // 컬럼 삭제
@@ -143,7 +162,7 @@ columnBtn.addEventListener('click', async () => {
     await createResponse.json().then((result) => {
       // HTML 세팅
       const columnSet = `
-                        <div class="column" id="${result.data.id}">
+                        <div class="column" draggable="true" id="${result.data.id}">
                           <h2 class="column-title">${result.data.columnName}</h2>
                           <div class="card">Card 1</div>
                           <div class="card">Card 2</div>
