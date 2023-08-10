@@ -49,17 +49,18 @@ document.addEventListener('DOMContentLoaded', async (e) => {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
+          Authorization: `Bearer ${accessToken}`,
         },
       });
       await getCardsData.json().then((result) => {
+        console.log(result.data);
         result.data.forEach((a) => {
-          document.querySelector('.card-list').innerHTML = `<div class="card-list">
+          document.querySelector('.card-list').innerHTML += `
                                                             <h2>${a.cardName}</h2>
                                                             <p>${a.cardDesc}</p>
                                                             <p>${a.cardColor}</p>
                                                             <p>${a.dueDate}</p>
                                                             <button class="add-comment-button">댓글추가</button>
-                                                            </div>
                                                             `;
         });
         result.errorMessage ? alert('오류') : alert('조회 성공');
@@ -112,6 +113,7 @@ document.addEventListener('DOMContentLoaded', async (e) => {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
+            Authorization: `Bearer ${accessToken}`,
           },
           body: JSON.stringify({
             cardName,
@@ -218,7 +220,9 @@ columnBtn.addEventListener('click', async () => {
       const columnSet = `
                         <div class="column" draggable="true" id="${result.data.id}">
                           <h2 class="column-title" id="${result.data.location}">${result.data.columnName}</h2>
+                          <h2 class="column-title" id="${result.data.location}">${result.data.columnName}</h2>
                           <div class="card">Card 1</div>
+                          <button id="cardBtn">카드 조회</button>
                           <button id="cardBtn">카드 조회</button>
                           <button class="add-card-button">Add Card</button>
                           <button class="delete-column-button">delete</button>
