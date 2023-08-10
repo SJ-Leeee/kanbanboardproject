@@ -316,3 +316,16 @@ function redirectToAuthPage() {
 function redirectToBoardPage(boardId) {
   window.location.href = `/html/board.html?boardId=${boardId}`; // 해당 Board 페이지로 이동
 }
+
+function getCookieValue(cookieName) {
+  const cookies = document.cookie;
+  const cookieArray = cookies.split(';');
+
+  for (const cookie of cookieArray) {
+    const [name, value] = cookie.trim().split('=');
+    if (name === cookieName) {
+      return value;
+    }
+  }
+  return null;
+}
