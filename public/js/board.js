@@ -49,18 +49,17 @@ document.addEventListener('DOMContentLoaded', async (e) => {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${accessToken}`,
         },
       });
       await getCardsData.json().then((result) => {
-        console.log(result.data);
         result.data.forEach((a) => {
-          document.querySelector('.card-list').innerHTML += `
+          document.querySelector('.card-list').innerHTML = `<div class="card-list">
                                                             <h2>${a.cardName}</h2>
                                                             <p>${a.cardDesc}</p>
                                                             <p>${a.cardColor}</p>
                                                             <p>${a.dueDate}</p>
                                                             <button class="add-comment-button">댓글추가</button>
+                                                            </div>
                                                             `;
         });
         result.errorMessage ? alert('오류') : alert('조회 성공');
@@ -113,7 +112,6 @@ document.addEventListener('DOMContentLoaded', async (e) => {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            Authorization: `Bearer ${accessToken}`,
           },
           body: JSON.stringify({
             cardName,
