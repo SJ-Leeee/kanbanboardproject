@@ -1,17 +1,17 @@
-function getCookieValue(cookieName) {
-  const cookies = document.cookie;
-  const cookieArray = cookies.split(';');
+// function getCookieValue(cookieName) {
+//   const cookies = document.cookie;
+//   const cookieArray = cookies.split(';');
 
-  for (const cookie of cookieArray) {
-    const [name, value] = cookie.trim().split('=');
-    if (name === cookieName) {
-      return value;
-    }
-  }
-  return null;
-}
+//   for (const cookie of cookieArray) {
+//     const [name, value] = cookie.trim().split('=');
+//     if (name === cookieName) {
+//       return value;
+//     }
+//   }
+//   return null;
+// }
 
-const accessToken = getCookieValue('access_token');
+// const accessToken = getCookieValue('access_token');
 
 document.querySelector('.add-card-button').addEventListener('click', async () => {
   console.log('hi');

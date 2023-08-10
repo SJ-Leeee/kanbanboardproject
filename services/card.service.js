@@ -18,6 +18,13 @@ class CardsService {
     return { code: 200, data: card };
   };
 
+  // 카드 조회
+  getCard = async (columnId) => {
+    const data = await this.cardsRepository.getCard(columnId);
+
+    return { code: 200, data };
+  };
+
   // 카드 마감일 설정
   updateCardDueDate = async ({ cardId, dueDate }) => {
     const card = await this.cardsRepository.updateCardDueDate({ cardId, dueDate });

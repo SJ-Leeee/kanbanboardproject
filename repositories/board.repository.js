@@ -46,6 +46,10 @@ class BoardRepository {
     return await InvitedUsers.create({ boardId, userId: addUserId });
   };
 
+  deleteUserToBoard = async (boardId, deleteUserId) => {
+    return await InvitedUsers.destroy({ where: { boardId, userId: deleteUserId } });
+  };
+
   findUserById = async (addUserId) => {
     return await Users.findOne({ where: { id: addUserId } });
   };

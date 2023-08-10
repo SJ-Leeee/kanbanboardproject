@@ -29,7 +29,7 @@ class AuthController {
 
       const tokens = await this.authService.logIn(loginId, password);
 
-      res.cookie('access_token', tokens.accessToken, { httpOnly: false, sameSite: 'strict' });
+      res.cookie('accessToken', tokens.accessToken, { httpOnly: true, sameSite: 'strict' });
       return res.status(200).json({ message: '로그인 성공' });
     } catch (error) {
       if (error.errorCode) {

@@ -1,5 +1,3 @@
-// const { get } = require('../../routes/card_detail.route');
-
 const wrapper = document.querySelector('.wrapper');
 const loginLink = document.querySelector('.login-link');
 const registerLink = document.querySelector('.register-link');
@@ -79,25 +77,3 @@ loginForm.addEventListener('submit', async (event) => {
     console.error('Error:', error);
   }
 });
-
-// 사용방법
-// 쿠키에서 액세스 토큰을 가져오는 함수
-// function getCookieValue(cookieName) {
-//   const cookies = document.cookie;
-//   const cookieArray = cookies.split(';');
-
-//   for (const cookie of cookieArray) {
-//     const [name, value] = cookie.trim().split('=');
-//     if (name === cookieName) {
-//       return value;
-//     }
-//   }
-//   return null;
-// }
-
-// const accessToken = getCookieValue('access_token')
-
-// headers: {
-//   'Content-Type': 'application/json',
-//   Authorization: `Bearer ${accessToken}`,
-// },

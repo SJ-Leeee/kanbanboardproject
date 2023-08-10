@@ -9,6 +9,7 @@ const authRouter = require('./routes/auth.route');
 const columnRouter = require('./routes/column.route.js');
 const boardRoute = require('./routes/board.route');
 const redis = require('redis');
+const authenticateToken = require('./middlewares/token.middleware');
 
 // Redis 클라이언트 초기화
 const redisClient = redis.createClient();
@@ -31,7 +32,7 @@ app.use('/api', [authRouter, boardRoute, columnRouter, commentsRouter, cardsRout
 app.use(express.static(path.join(__dirname, 'public')));
 
 // 기본 메인페이지 프론트 연결 확인
-app.get('/', (req, res) => {
+app.get('/', authenticateToken, (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'html', 'main.html'));
 });
 

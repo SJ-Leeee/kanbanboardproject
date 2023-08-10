@@ -12,6 +12,12 @@ class CardsRepository {
     });
   };
 
+  // 카드 조회
+  getCard = async (columnId) => {
+    const data = await Cards.findAll({ where: { columnId } });
+    return data;
+  };
+
   updateCardDueDate = async ({ cardId, dueDate }) => {
     await Cards.update({ dueDate: dueDate }, { where: { id: cardId } });
     return await Cards.findOne({ where: { id: cardId } });
