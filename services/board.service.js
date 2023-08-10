@@ -60,6 +60,7 @@ class BoardService {
   };
   addUserToBoard = async (userId, boardId, addUserId) => {
     try {
+      if (!addUserId) throw new CustomError('추가 사용자의 값이 없습니다.', 403);
       const exBoard = await this.boardRepository.findBoardById(boardId);
       if (!exBoard) throw new CustomError('보드가 존재하지 않습니다.', 403);
       if (exBoard.userId !== userId) throw new CustomError('유저 추가 권한이 존재하지 않습니다.', 401);

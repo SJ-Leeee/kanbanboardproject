@@ -6,12 +6,14 @@ const inviteUserModal = document.getElementById('inviteUserModal');
 const availableUsersList = document.getElementById('availableUsersList');
 const invitedUsersList = document.getElementById('invitedUsersList');
 
+// 보드 상세 정보 모달 창 안에 '사용자 추가' 버튼을 누르면 실행
 inviteUserToBoard.addEventListener('click', async (event) => {
   const parentElement = event.target.parentNode;
   const boardId = parentElement.querySelector('#boardNameSpan').getAttribute('data-board-id');
   await openInviteUserModal(boardId);
 });
 
+// api 호출한 데이터들을 'render ~~' 함수의 인자로 넘겨서 렌더링
 async function openInviteUserModal(boardId) {
   try {
     const response = await fetch('/api/users', {
@@ -22,7 +24,7 @@ async function openInviteUserModal(boardId) {
     });
     if (response.ok) {
       const data = await response.json();
-      renderAvailableUsers(data.data);
+      renderAvailableUsers(data.data, boardId);
     } else {
       const responseData = await response.json();
       alert(responseData.err);
@@ -39,7 +41,7 @@ async function openInviteUserModal(boardId) {
     });
     if (response.ok) {
       const data = await response.json();
-      renderInvitedUsers(data.data);
+      renderInvitedUsers(data.data, boardId);
       inviteUserModal.style.display = 'block';
     } else {
       const responseData = await response.json();
@@ -50,45 +52,64 @@ async function openInviteUserModal(boardId) {
   }
 }
 
-function renderAvailableUsers(users) {
+function renderAvailableUsers(users, boardId) {
   availableUsersList.innerHTML = ''; // 목록 초기화
   users.forEach((user) => {
     const userItem = document.createElement('div');
     userItem.className = 'user-item';
     userItem.innerHTML = `
       <span>${user.userName}</span>
-      <button class="invite-button" onclick="inviteUser(${user.id}, ${user.userName})">+</button>
+      <button class="invite-button" id="${user.id}" onclick="inviteUser(${user.id}, '${user.userName}', ${boardId})">+</button>
     `;
     availableUsersList.appendChild(userItem);
   });
 }
 
-function renderInvitedUsers(users) {
-  console.log(users);
+function renderInvitedUsers(users, boardId) {
   invitedUsersList.innerHTML = ''; // 목록 초기화
   users.forEach((user) => {
     const userItem = document.createElement('div');
     userItem.className = 'user-item';
     userItem.innerHTML = `
       <span>${user.User.userName}</span>
-      <button class="invite-button" onclick="removeInvitedUser(${user.User.id}, ${user.User.userName})">-</button>
+      <button class="invite-button" id="${user.User.id}" onclick="removeInvitedUser(${user.User.id}, '${user.User.userName}', ${boardId})">-</button>
     `;
     invitedUsersList.appendChild(userItem);
   });
 }
 
-async function inviteUser(userId, userName) {
-  const invitedUserItem = document.createElement('div');
-  invitedUserItem.className = 'invited-user';
-  invitedUserItem.setAttribute('data-user-id', userId);
-  invitedUserItem.innerHTML = `
+async function inviteUser(userId, userName, boardId) {
+  try {
+    const response = await fetch(`/api/board/${boardId}/user`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${accessToken}`,
+      },
+      body: JSON.stringify({
+        addUserId: userId,
+      }),
+    });
+    if (response.ok) {
+      const data = await response.json();
+      const invitedUserItem = document.createElement('div');
+      invitedUserItem.className = 'user-item';
+      invitedUserItem.innerHTML = `
     <span>${userName}</span>
-    <button class="remove-button" onclick="removeInvitedUser('${userId}')">-</button>
+    <button class="remove-button" onclick="removeInvitedUser(${userId},'${userName}',${boardId})">-</button>
   `;
-  invitedUsersList.appendChild(invitedUserItem);
+      invitedUsersList.appendChild(invitedUserItem); // 기존의 것을 찾아서 지우기
+      alert(data.message);
+    } else {
+      const responseData = await response.json();
+      alert(responseData.err);
+    }
+  } catch (error) {
+    console.error('오류 발생:', error);
+  }
 }
 
-function removeInvitedUser(userId) {
+async function removeInvitedUser(userId, userName, boardId) {
   const userToRemove = invitedUsersList.querySelector(`.invited-user[data-user-id="${userId}"]`);
   if (userToRemove) {
     invitedUsersList.removeChild(userToRemove);
