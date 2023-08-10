@@ -155,7 +155,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       const data = await response.json();
       renderBoards(data);
     } else {
-      const responseData = await response.json();
+      const data = await response.json();
       if (data.message === '액세스 토큰 오류') {
         window.location.href = '/';
       } else if (data.message === '리프레시 토큰 만료') {
@@ -163,7 +163,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       } else if (data.message === '리프레시 토큰 오류') {
         window.location.href = '/';
       }
-      alert(responseData.err);
+      alert(data.err);
     }
   } catch (error) {
     console.error('An error occurred:', error);

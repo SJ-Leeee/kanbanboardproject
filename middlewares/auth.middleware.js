@@ -20,29 +20,19 @@ class AuthenticationMiddleware {
 
   authenticateAccessToken = async (req, res, next) => {
     try {
-      console.log(req.headers);
       const accessToken = req.headers.cookie.split('=')[1]; // Bearer 액세스토큰에서 액세스토큰 추출
-
-      console.log(
-        '🚀 ~ file: auth.middleware.js:26 ~ AuthenticationMiddleware ~ authenticateAccessToken= ~ accessToken:',
-        accessToken,
-      );
-
+      res.locals.accessToken = accessToken;
       // postman
       const decodedToken = jwt.verify(accessToken, env.ACCESS_KEY);
 
       // 유효한 액세스 토큰이라면 다음 미들웨어나 API 실행
       req.user = { userId: decodedToken.userId }; // 사용자 "아이디"를 req.user 객체에 저장
+      console.log(req.user);
       next();
     } catch (error) {
       // 액세스 토큰이 만료되었을 경우, 리프레시 토큰 검증 미들웨어로 이동
       if (error.name === 'TokenExpiredError') {
-        console.log(
-          '🚀 ~ file: auth.middleware.js:28 ~ AuthenticationMiddleware ~ authenticateAccessToken= ~ accessToken:',
-          accessToken,
-        );
-
-        const decoded = jwt.decode(accessToken);
+        const decoded = jwt.decode(res.locals.accessToken);
         req.user = { userId: decoded.userId };
         return this.authenticateRefreshToken(req, res, next);
       }
@@ -63,10 +53,7 @@ class AuthenticationMiddleware {
 
       // 유효한 리프레시 토큰인 경우, 새로운 액세스 토큰 발급
       const newAccessToken = this.generateAccessToken({ userId: decodedToken.userId });
-      res.status(200).json({
-        message: '새로운 액세스 토큰 발급',
-        accessToken: newAccessToken,
-      });
+      res.cookie('accessToken', newAccessToken, { httpOnly: true, sameSite: 'strict' });
       req.user = { userId: decodedToken.userId }; // 사용자 "아이디"를 req.user 객체에 저장
       next();
     } catch (error) {
