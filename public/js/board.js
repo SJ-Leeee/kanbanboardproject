@@ -5,18 +5,6 @@ const columnBtn = document.querySelector('#columnBtn');
 // boardId
 const params = new URLSearchParams(window.location.search);
 const boardId = params.get('boardId');
-// accessToken
-function getCookieValue(cookieName) {
-  const cookies = document.cookie;
-  const cookieArray = cookies.split(';');
-
-  for (const cookie of cookieArray) {
-    const [name, value] = cookie.trim().split('=');
-    if (name === cookieName) return value;
-  }
-  return null;
-}
-const accessToken = getCookieValue('access_token');
 
 // 컬럼 조회
 document.addEventListener('DOMContentLoaded', async (e) => {
@@ -25,7 +13,6 @@ document.addEventListener('DOMContentLoaded', async (e) => {
     const getColumnResponse = await fetch(`/api/boards/${boardId}/columns`, {
       method: 'GET',
       headers: {
-        Authorization: `Bearer ${accessToken}`,
         'Content-Type': 'application/json',
       },
     });
@@ -62,18 +49,17 @@ document.addEventListener('DOMContentLoaded', async (e) => {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${accessToken}`,
         },
       });
       await getCardsData.json().then((result) => {
-        console.log(result.data);
         result.data.forEach((a) => {
-          document.querySelector('.card-list').innerHTML += `
+          document.querySelector('.card-list').innerHTML = `<div class="card-list">
                                                             <h2>${a.cardName}</h2>
                                                             <p>${a.cardDesc}</p>
                                                             <p>${a.cardColor}</p>
                                                             <p>${a.dueDate}</p>
                                                             <button class="add-comment-button">댓글추가</button>
+                                                            </div>
                                                             `;
         });
         result.errorMessage ? alert('오류') : alert('조회 성공');
@@ -126,7 +112,6 @@ document.addEventListener('DOMContentLoaded', async (e) => {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            Authorization: `Bearer ${accessToken}`,
           },
           body: JSON.stringify({
             cardName,
@@ -152,7 +137,6 @@ document.addEventListener('DOMContentLoaded', async (e) => {
         const deleteResponse = await fetch(`/api/boards/${boardId}/columns/${columnId}`, {
           method: 'DELETE',
           headers: {
-            Authorization: `Bearer ${accessToken}`,
             'Content-Type': 'application/json',
           },
         });
@@ -191,7 +175,6 @@ document.addEventListener('DOMContentLoaded', async (e) => {
             const changeColumnNameResponse = await fetch(`/api/boards/${boardId}/columns/${columnId}`, {
               method: 'PUT',
               headers: {
-                Authorization: `Bearer ${accessToken}`,
                 'Content-Type': 'application/json',
               },
               body: JSON.stringify({ columnName }),
@@ -225,7 +208,6 @@ columnBtn.addEventListener('click', async () => {
     const createResponse = await fetch(`/api/boards/${boardId}/columns`, {
       method: 'POST',
       headers: {
-        Authorization: `Bearer ${accessToken}`,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({ columnName }),
