@@ -16,6 +16,7 @@ class ColumnService {
       boardId: createColumnData.boardId,
       columnName: createColumnData.columnName,
       location: createColumnData.location,
+      location: createColumnData.location,
       createdAt: createColumnData.createdAt,
       updatedAt: createColumnData.updatedAt,
     };
@@ -24,27 +25,22 @@ class ColumnService {
   // 컬럼 조회 메서드
   findAllColumn = async (boardId) => {
     // 컬럼 데이터 요청
-    const data = await this.columnRepository.findAllColumn(boardId);
-
-    if (data.length === 0) {
-      return data;
-    } else {
-      // 기존 컬럼 순으로 조회
-      data.sort((a, b) => {
-        return a.createdAt - b.createdAt;
-      });
-      // 반환값
-      return data.map((column) => {
-        return {
-          id: column.id,
-          boardId: column.boardId,
-          columnName: column.columnName,
-          location: column.location,
-          createdAt: column.createdAt,
-          updatedAt: column.updatedAt,
-        };
-      });
-    }
+    const allColumn = await this.columnRepository.findAllColumn(boardId);
+    // 기존 컬럼 순으로 조회
+    allColumn.sort((a, b) => {
+      return a.createdAt - b.createdAt;
+    });
+    // 반환값
+    return allColumn.map((column) => {
+      return {
+        id: column.id,
+        boardId: column.boardId,
+        columnName: column.columnName,
+        location: column.location,
+        createdAt: column.createdAt,
+        updatedAt: column.updatedAt,
+      };
+    });
   };
 
   // 컬럼명 수정 메서드
@@ -56,8 +52,10 @@ class ColumnService {
     // 반환값
     return {
       id: columnId,
+      id: columnId,
       boardId: boardId,
       columnName: updateColumnData.columnName,
+      location: updateColumnData.location,
       location: updateColumnData.location,
       createdAt: updateColumnData.createdAt,
       updatedAt: updateColumnData.updatedAt,

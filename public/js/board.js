@@ -18,8 +18,6 @@ document.addEventListener('DOMContentLoaded', async (e) => {
     });
     // fetch로 받아온 data 제이슨화
     const getColumnData = await getColumnResponse.json();
-
-    if (getColumnData.message) return alert(getColumnData.message);
     // 가공한 데이터 location의 내림차순으로 정렬해서 할당
     const descColumn = getColumnData.data.sort((a, b) => {
       a.location - b.location;
@@ -39,8 +37,10 @@ document.addEventListener('DOMContentLoaded', async (e) => {
       // 화면에 HTML 띄우기
       board.insertBefore(document.createRange().createContextualFragment(columnSet), columnBtn);
     });
-    // 응답 출력
-    if (getColumnData.errorMessage) alert(getColumnData.errorMessage);
+    // 오류 출력
+    if (getColumnData.errorMessage) {
+      return alert(getColumnData.errorMessage);
+    }
 
     // 카드 조회
     document.querySelector('#cardBtn').addEventListener('click', async (e) => {
@@ -49,17 +49,18 @@ document.addEventListener('DOMContentLoaded', async (e) => {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
+          Authorization: `Bearer ${accessToken}`,
         },
       });
       await getCardsData.json().then((result) => {
+        console.log(result.data);
         result.data.forEach((a) => {
-          document.querySelector('.card-list').innerHTML = `<div class="card-list">
+          document.querySelector('.card-list').innerHTML += `
                                                             <h2>${a.cardName}</h2>
                                                             <p>${a.cardDesc}</p>
                                                             <p>${a.cardColor}</p>
                                                             <p>${a.dueDate}</p>
                                                             <button class="add-comment-button">댓글추가</button>
-                                                            </div>
                                                             `;
         });
         result.errorMessage ? alert('오류') : alert('조회 성공');
@@ -92,12 +93,11 @@ document.addEventListener('DOMContentLoaded', async (e) => {
         // columnsId
         const columnId = e.target.parentNode.id;
         const cardNeed = document.querySelector('.card');
-        cardNeed.innerHTML = `<div class="card-list">
+        cardNeed.innerHTML = `
                               <input type="text" value="Card Example" class="card-name-input">
                               <input type="text" value="카드 예시 입니다." class="card-description-input">
                               <input type="text" value="핑꾸핑꾸 핫핑쿠쨩" class="card-color-input">
                               <input type="text" value="1" class="assignee-input">
-                              </div>
                              `;
         // card needs
         const cardName = document.querySelector('.card-name-input').value;
@@ -105,28 +105,28 @@ document.addEventListener('DOMContentLoaded', async (e) => {
         const cardColor = document.querySelector('.card-color-input').value;
         const assignee = document.querySelector('.assignee-input').value;
         // addCard 함수호출
-        await addCard(columnId, cardName, cardDesc, cardColor, assignee);
-
-        // create card fetch
-        async function addCard(columnId, cardName, cardDesc, cardColor, assignee) {
-          const response = await fetch(`/api/cards/${columnId}`, {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-              cardName,
-              cardDesc,
-              cardColor,
-              assignee,
-            }),
-          });
-          const cardCreateData = await response.json();
-          cardCreateData.errorMessage ? alert(cardCreateData.errorMessage) : alert(cardCreateData.message);
-
-          window.location.reload();
-        }
+        await addCard(columnId, cardName, cardDesc, cardColor, assignee, accessToken);
       });
+      // create card fetch
+      async function addCard(columnId, cardName, cardDesc, cardColor, assignee, accessToken) {
+        const response = await fetch(`/api/cards/${columnId}`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${accessToken}`,
+          },
+          body: JSON.stringify({
+            cardName,
+            cardDesc,
+            cardColor,
+            assignee,
+          }),
+        });
+        const cardCreateData = await response.json();
+        cardCreateData.errorMessage ? alert(cardCreateData.errorMessage) : alert(cardCreateData.message);
+
+        window.location.reload();
+      }
     });
 
     // 컬럼 삭제
@@ -220,9 +220,7 @@ columnBtn.addEventListener('click', async () => {
       const columnSet = `
                         <div class="column" draggable="true" id="${result.data.id}">
                           <h2 class="column-title" id="${result.data.location}">${result.data.columnName}</h2>
-                          <h2 class="column-title" id="${result.data.location}">${result.data.columnName}</h2>
                           <div class="card">Card 1</div>
-                          <button id="cardBtn">카드 조회</button>
                           <button id="cardBtn">카드 조회</button>
                           <button class="add-card-button">Add Card</button>
                           <button class="delete-column-button">delete</button>
