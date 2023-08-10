@@ -19,7 +19,6 @@ document.addEventListener('DOMContentLoaded', async () => {
       renderBoards(data);
     } else {
       const data = await response.json();
-      const data = await response.json();
       if (data.message === '액세스 토큰 오류') {
         alert('로그인이 필요한 기능입니다.');
         window.location.href = '/';
@@ -227,9 +226,25 @@ function closeModal() {
   modal.style.display = 'none';
 }
 
-// 로그인 누를 시 로그인페이지로 리다이렉트
-function redirectToAuthPage() {
-  window.location.href = '/html/auth.html'; // auth.html 페이지로 이동
+// 로그아웃
+async function logOut() {
+  try {
+    const response = await fetch(`/api/logout`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+    if (response.ok) {
+      const data = await response.json();
+      alert(data.message);
+      window.location.href = '/html/auth.html'; // auth.html 페이지로 이동
+    } else {
+      console.error('Login failed');
+    }
+  } catch (error) {
+    console.error('An error occurred:', error);
+  }
 }
 
 // 보드 누를 시 board 페이지로 ?boardId=4 이런식으로 페이지 이동
