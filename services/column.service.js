@@ -15,6 +15,7 @@ class ColumnService {
       id: createColumnData.id,
       boardId: createColumnData.boardId,
       columnName: createColumnData.columnName,
+      location: createColumnData.location,
       createdAt: createColumnData.createdAt,
       updatedAt: createColumnData.updatedAt,
     };
@@ -34,6 +35,7 @@ class ColumnService {
         id: column.id,
         boardId: column.boardId,
         columnName: column.columnName,
+        location: column.location,
         createdAt: column.createdAt,
         updatedAt: column.updatedAt,
       };
@@ -48,9 +50,10 @@ class ColumnService {
     const updateColumnData = await this.columnRepository.updateColumn(boardId, columnId, columnName);
     // 반환값
     return {
-      id: updateColumnData.id,
+      id: columnId,
       boardId: boardId,
       columnName: updateColumnData.columnName,
+      location: updateColumnData.location,
       createdAt: updateColumnData.createdAt,
       updatedAt: updateColumnData.updatedAt,
     };
