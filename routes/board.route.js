@@ -12,6 +12,7 @@ router.get('/boards', authmiddleware.authenticateAccessToken, boardController.ge
 router.patch('/board/:boardId', authmiddleware.authenticateAccessToken, boardController.updateBoard);
 router.delete('/board/:boardId', authmiddleware.authenticateAccessToken, boardController.deleteBoard);
 router.post('/board/:boardId/user', authmiddleware.authenticateAccessToken, boardController.addUserToBoard);
+router.delete('/board/:boardId/users', authmiddleware.authenticateAccessToken, boardController.deleteUserToBoard);
 
 // 유저데이터
 router.get('/users', boardController.getAllUsers);

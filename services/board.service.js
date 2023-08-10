@@ -78,6 +78,25 @@ class BoardService {
       throw error;
     }
   };
+  deleteUserToBoard = async (userId, boardId, deleteUserId) => {
+    try {
+      if (!deleteUserId) throw new CustomError('삭제 할 사용자의 값이 없습니다.', 403);
+      const exBoard = await this.boardRepository.findBoardById(boardId);
+      if (!exBoard) throw new CustomError('보드가 존재하지 않습니다.', 403);
+      if (exBoard.userId !== userId) throw new CustomError('유저 추가 권한이 존재하지 않습니다.', 401);
+
+      const exUser = await this.boardRepository.findUserById(deleteUserId);
+      if (!exUser) throw new CustomError(`해당 유저가 존재하지 않습니다.`, 409);
+      const exUserInBoard = await this.boardRepository.exUserInBoard(boardId, deleteUserId);
+      if (!exUserInBoard) throw new CustomError(`보드에 추가되어있지 않은 사용자 입니다.`, 409);
+
+      await this.boardRepository.deleteUserToBoard(boardId, deleteUserId);
+
+      return { code: 200, message: `정상적으로 보드에서 삭제되었습니다.` };
+    } catch (error) {
+      throw error;
+    }
+  };
   getMyBoards = async (userId) => {
     try {
       const myBoards = await this.boardRepository.findAllBoardByUserId(userId);
