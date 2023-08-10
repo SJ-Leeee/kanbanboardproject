@@ -95,7 +95,7 @@ async function inviteUser(userId, userName, boardId) {
       invitedUserItem.className = 'user-item';
       invitedUserItem.innerHTML = `
     <span>${userName}</span>
-    <button class="remove-button" onclick="removeInvitedUser(${userId},'${userName}',${boardId})">-</button>
+    <button class="remove-button" id="${userId}" onclick="removeInvitedUser(${userId},'${userName}',${boardId})">-</button>
   `;
       invitedUsersList.appendChild(invitedUserItem); // 기존의 것을 찾아서 지우기
       alert(data.message);
@@ -109,9 +109,30 @@ async function inviteUser(userId, userName, boardId) {
 }
 
 async function removeInvitedUser(userId, userName, boardId) {
-  const userToRemove = invitedUsersList.querySelector(`.invited-user[data-user-id="${userId}"]`);
-  if (userToRemove) {
-    invitedUsersList.removeChild(userToRemove);
+  try {
+    const response = await fetch(`/api/board/${boardId}/users`, {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${accessToken}`,
+      },
+      body: JSON.stringify({
+        deleteUserId: userId,
+      }),
+    });
+    if (response.ok) {
+      const data = await response.json();
+      const userToRemove = invitedUsersList.querySelector(`.user-item button[id="${userId}"]`);
+      if (userToRemove) {
+        invitedUsersList.removeChild(userToRemove.parentElement);
+      }
+      alert(data.message);
+    } else {
+      const responseData = await response.json();
+      alert(responseData.err);
+    }
+  } catch (error) {
+    console.error('오류 발생:', error);
   }
 }
 
