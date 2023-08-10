@@ -2,27 +2,24 @@
 const board = document.querySelector('.board');
 // create-column button tag
 const columnBtn = document.querySelector('#columnBtn');
+// boardId
+const params = new URLSearchParams(window.location.search);
+const boardId = params.get('boardId');
+// accessToken
+function getCookieValue(cookieName) {
+  const cookies = document.cookie;
+  const cookieArray = cookies.split(';');
+
+  for (const cookie of cookieArray) {
+    const [name, value] = cookie.trim().split('=');
+    if (name === cookieName) return value;
+  }
+  return null;
+}
+const accessToken = getCookieValue('access_token');
 
 // 컬럼 조회
 document.addEventListener('DOMContentLoaded', async (e) => {
-  // boardId
-  const params = new URLSearchParams(window.location.search);
-  const boardId = params.get('boardId');
-  // accessToken
-  function getCookieValue(cookieName) {
-    const cookies = document.cookie;
-    const cookieArray = cookies.split(';');
-
-    for (const cookie of cookieArray) {
-      const [name, value] = cookie.trim().split('=');
-      if (name === cookieName) {
-        return value;
-      }
-    }
-    return null;
-  }
-
-  const accessToken = getCookieValue('access_token');
   // 컬럼조회 API fetch
   try {
     const getColumnResponse = await fetch(`/api/boards/${boardId}/columns`, {
@@ -60,21 +57,6 @@ document.addEventListener('DOMContentLoaded', async (e) => {
       deleteBtn.addEventListener('click', async (e) => {
         // columnId
         const columnId = e.target.parentNode.id;
-        // accessToken
-        function getCookieValue(cookieName) {
-          const cookies = document.cookie;
-          const cookieArray = cookies.split(';');
-
-          for (const cookie of cookieArray) {
-            const [name, value] = cookie.trim().split('=');
-            if (name === cookieName) {
-              return value;
-            }
-          }
-          return null;
-        }
-
-        const accessToken = getCookieValue('access_token');
         // 컬럼삭제 API fetch
         const deleteResponse = await fetch(`/api/boards/${boardId}/columns/${columnId}`, {
           method: 'DELETE',
@@ -108,30 +90,13 @@ document.addEventListener('DOMContentLoaded', async (e) => {
         inputTag.addEventListener('blur', (e) => {
           window.location.reload();
         });
-
+        // keydown 이벤트리스너
         inputTag.addEventListener('keydown', async (e) => {
           // columnId
           const columnId = e.target.parentNode.parentNode.id;
-          // accessToken
-          function getCookieValue(cookieName) {
-            const cookies = document.cookie;
-            const cookieArray = cookies.split(';');
-
-            for (const cookie of cookieArray) {
-              const [name, value] = cookie.trim().split('=');
-              if (name === cookieName) {
-                return value;
-              }
-            }
-            return null;
-          }
-
-          const accessToken = getCookieValue('access_token');
           // 컬럼명 변경 API fetch
-
           if (e.key === 'Enter') {
             const columnName = inputTag.value;
-
             const changeColumnNameResponse = await fetch(`/api/boards/${boardId}/columns/${columnId}`, {
               method: 'PUT',
               headers: {
@@ -158,24 +123,6 @@ document.addEventListener('DOMContentLoaded', async (e) => {
 
 // 컬럼 생성
 columnBtn.addEventListener('click', async () => {
-  // boardId
-  const params = new URLSearchParams(window.location.search);
-  const boardId = params.get('boardId');
-  // accessToken
-  function getCookieValue(cookieName) {
-    const cookies = document.cookie;
-    const cookieArray = cookies.split(';');
-
-    for (const cookie of cookieArray) {
-      const [name, value] = cookie.trim().split('=');
-      if (name === cookieName) {
-        return value;
-      }
-    }
-    return null;
-  }
-
-  const accessToken = getCookieValue('access_token');
   // 생성 columnName
   const columnName = prompt('생성할 컬럼명을 입력해주세요.');
   // 취소버튼 클릭시 alert메시지
