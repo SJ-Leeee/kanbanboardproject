@@ -30,6 +30,8 @@ class AuthController {
       const tokens = await this.authService.logIn(loginId, password);
 
       res.cookie('accessToken', tokens.accessToken, { httpOnly: true, sameSite: 'strict' });
+      // 프론트에서 접근x
+      // 쿠키에 있으면 헤더에 자동으로 있다
       return res.status(200).json({ message: '로그인 성공' });
     } catch (error) {
       if (error.errorCode) {
