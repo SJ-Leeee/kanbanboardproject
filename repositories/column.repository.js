@@ -4,7 +4,12 @@ const { Op } = require('sequelize');
 class ColumnRepository {
   // 컬럼 생성
   createColumn = async (boardId, columnName) => {
-    const createColumnData = await Columns.create({ boardId, columnName });
+    const columns = await Columns.findOne({ order: [['createdAt', 'DESC']] });
+    // 만약 DB에 저장된 데이터가 없어서 null 이 출력된다면?
+    let location;
+    columns === null ? (location = 0) : (location = columns.location + 1);
+
+    const createColumnData = await Columns.create({ boardId, columnName, location });
     // 반환값
     return createColumnData;
   };
