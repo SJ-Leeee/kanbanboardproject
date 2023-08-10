@@ -21,7 +21,13 @@ class AuthenticationMiddleware {
   authenticateAccessToken = async (req, res, next) => {
     try {
       console.log(req.headers);
-      const accessToken = req.headers.authorization.split(' ')[1]; // Bearer 액세스토큰에서 액세스토큰 추출
+      const accessToken = req.headers.cookie.split('=')[1]; // Bearer 액세스토큰에서 액세스토큰 추출
+
+      console.log(
+        '🚀 ~ file: auth.middleware.js:26 ~ AuthenticationMiddleware ~ authenticateAccessToken= ~ accessToken:',
+        accessToken,
+      );
+
       // postman
       const decodedToken = jwt.verify(accessToken, env.ACCESS_KEY);
 

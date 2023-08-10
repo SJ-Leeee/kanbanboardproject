@@ -1,6 +1,5 @@
 const myBoardList = document.querySelector('#myBoards');
 const invitedBoardList = document.querySelector('#invitedBoards');
-const accessToken = getCookieValue('access_token');
 const addBoardBtn = document.querySelector('#addBoardButton');
 const inviteUserModal = document.getElementById('inviteUserModal');
 const availableUsersList = document.getElementById('availableUsersList');
@@ -102,16 +101,11 @@ function closeInviteUserModal() {
 }
 
 document.addEventListener('DOMContentLoaded', async () => {
-  if (!accessToken) {
-    alert('로그인 후 이용가능한 기능입니다.');
-    window.location.href = '/'; // auth.html 페이지로 이동
-  }
   try {
     const response = await fetch('/api/boards', {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${accessToken}`,
       },
     });
 
@@ -120,7 +114,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       renderBoards(data);
     } else {
       const responseData = await response.json();
-      alert(responseData.err);
+      window.location.href = '/';
     }
   } catch (error) {
     console.error('An error occurred:', error);
@@ -152,7 +146,6 @@ addBoardBtn.addEventListener('click', async () => {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${accessToken}`,
         },
         body: JSON.stringify({
           boardName: addBoardNameInput.value,
@@ -262,7 +255,6 @@ async function openModal(boardId, event) {
           method: 'DELETE',
           headers: {
             'Content-Type': 'application/json',
-            Authorization: `Bearer ${accessToken}`,
           },
         });
         if (response.ok) {
@@ -288,7 +280,6 @@ async function openModal(boardId, event) {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${accessToken}`,
         },
         body: JSON.stringify({
           boardName: boardNameInput.value,
