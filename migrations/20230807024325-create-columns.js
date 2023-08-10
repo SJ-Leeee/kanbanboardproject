@@ -18,7 +18,11 @@ module.exports = {
         onDelete: 'CASCADE',
         onUpdate: 'CASCADE',
       },
-      colmnName: {
+      location: {
+        defaultValue: 0,
+        type: Sequelize.INTEGER,
+      },
+      columnName: {
         type: Sequelize.STRING,
       },
       createdAt: {
