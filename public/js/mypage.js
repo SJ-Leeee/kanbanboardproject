@@ -95,7 +95,7 @@ async function inviteUser(userId, userName, boardId) {
       invitedUserItem.className = 'user-item';
       invitedUserItem.innerHTML = `
     <span>${userName}</span>
-    <button class="remove-button" id="${userId}" onclick="removeInvitedUser(${userId},'${userName}',${boardId})">-</button>
+    <button class="remove-button" onclick="removeInvitedUser('${userId}')">-</button>
   `;
       invitedUsersList.appendChild(invitedUserItem); // 기존의 것을 찾아서 지우기
       alert(data.message);
