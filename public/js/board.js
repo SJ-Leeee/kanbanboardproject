@@ -37,7 +37,7 @@ document.addEventListener('DOMContentLoaded', async (e) => {
                           <div class="column" draggable="true" id="${data.id}">
                             <h2 class="column-title">${data.columnName}</h2>
                             <div class="card">Card 1</div>
-                            <div class="card">Card 2</div>
+                           
                             <button class="add-card-button">Add Card</button>
                             <button class="delete-column-button">delete</button>
                           </div>
@@ -50,7 +50,51 @@ document.addEventListener('DOMContentLoaded', async (e) => {
         return alert(result.errorMessage);
       }
     });
+    document.querySelector('.add-card-button').addEventListener('click', async (e) => {
+      console.log(e.target.parentNode.id);
+      const columnId = e.target.parentNode.id;
+      const cards = document.querySelector('.card');
+      console.log(cards);
+      cards.innerHTML += `<input type="text" value="hi" class="card-name-input">`;
+      const cardName = document.querySelector('.card-name-input').value;
+      console.log(cardName);
+      const cardDesc = document.querySelector('.card-description-input').value;
+      const cardColor = document.querySelector('.card-color-input').value;
+      const assignee = document.querySelector('.assignee-input').value;
+      // const accessToken = getCookieValue('access_token').value;
 
+      await addCard(columnId, cardName, cardDesc, cardColor, assignee, accessToken);
+    });
+
+    async function addCard(columnId, cardName, cardDesc, cardColor, assignee, accessToken) {
+      if (!accessToken) {
+        throw new Error('액세스 토큰 없습니다. 로그인이 필요합니다.');
+      }
+
+      const response = await fetch(`/api/card/${columnId}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${accessToken}`,
+        },
+        body: JSON.stringify({
+          cardName,
+          cardDesc,
+          cardColor,
+          assignee,
+        }),
+      });
+
+      if (response.ok) {
+        const cardData = await response.json();
+        console.log('Card added successfully:', cardData.data);
+        // 카드 추가가 완료되면 해당 카드를 프론트엔드에 표시하는 코드 추가
+      } else {
+        const errorMessage = await response.text();
+        console.error('Error card:', errorMessage);
+        alert(errorMessage.err);
+      }
+    }
     // 드래그 앤 드랍
     const columns = document.querySelectorAll('.column');
     columns.forEach((column) => {
