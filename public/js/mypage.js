@@ -114,7 +114,11 @@ document.addEventListener('DOMContentLoaded', async () => {
       renderBoards(data);
     } else {
       const responseData = await response.json();
-      if (responseData.message === '액세스 토큰 오류') {
+      if (data.message === '액세스 토큰 오류') {
+        window.location.href = '/';
+      } else if (data.message === '리프레시 토큰 만료') {
+        window.location.href = '/';
+      } else if (data.message === '리프레시 토큰 오류') {
         window.location.href = '/';
       }
       alert(responseData.err);
