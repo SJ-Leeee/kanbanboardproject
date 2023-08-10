@@ -6,9 +6,12 @@ const cardController = new CardController();
 const authMiddleware = new AuthenticationMiddleware();
 
 // 카드생성
-router.post('/card/:columnId', authMiddleware.authenticateAccessToken, cardController.createCard);
+router.post('/cards/:columnId', authMiddleware.authenticateAccessToken, cardController.createCard);
+
+// 카드 조회
+router.get('/cards/:columnId', authMiddleware.authenticateAccessToken, cardController.getCard);
 
 // 카드 마감일 업데이트 (생성 / 수정 가능)
-router.put('/card/:cardId', authMiddleware.authenticateAccessToken, cardController.updateCardDueDate);
+router.put('/cards/:cardId', authMiddleware.authenticateAccessToken, cardController.updateCardDueDate);
 
 module.exports = router;

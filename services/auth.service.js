@@ -44,7 +44,7 @@ class AuthService {
     const refreshToken = generateRefreshToken(user);
 
     // Redis에 리프레시 토큰 저장
-    await this.redisClient.set(user.loginId.toString(), refreshToken);
+    await this.redisClient.set(user.id.toString(), refreshToken);
 
     return { accessToken, refreshToken };
   };
@@ -59,7 +59,7 @@ class AuthService {
 
 const generateAccessToken = (user) => {
   const accessToken = jwt.sign({ userId: user.id }, env.ACCESS_KEY, {
-    expiresIn: '15m',
+    expiresIn: '10s',
   });
   return accessToken;
 };

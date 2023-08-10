@@ -19,6 +19,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       renderBoards(data);
     } else {
       const data = await response.json();
+      const data = await response.json();
       if (data.message === '액세스 토큰 오류') {
         alert('로그인이 필요한 기능입니다.');
         window.location.href = '/';
