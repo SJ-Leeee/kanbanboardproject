@@ -24,6 +24,7 @@ async function openInviteUserModal(boardId) {
     if (response.ok) {
       const data = await response.json();
       renderAvailableUsers(data.data, boardId);
+      renderAvailableUsers(data.data, boardId);
     } else {
       const responseData = await response.json();
       alert(responseData.err);
@@ -64,6 +65,7 @@ function renderAvailableUsers(users, boardId) {
   });
 }
 
+function renderInvitedUsers(users, boardId) {
 function renderInvitedUsers(users, boardId) {
   invitedUsersList.innerHTML = ''; // 목록 초기화
   users.forEach((user) => {
