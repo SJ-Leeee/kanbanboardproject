@@ -5,8 +5,7 @@ const inviteUserModal = document.getElementById('inviteUserModal');
 const availableUsersList = document.getElementById('availableUsersList');
 const invitedUsersList = document.getElementById('invitedUsersList');
 
-// 보드 상세 정보 모달 창 안에 '사용자 추가' 버튼을 누르면 실행
-
+// 실행 시 보드 목록 렌더링
 document.addEventListener('DOMContentLoaded', async () => {
   try {
     const response = await fetch('/api/boards', {
@@ -15,22 +14,51 @@ document.addEventListener('DOMContentLoaded', async () => {
         'Content-Type': 'application/json',
       },
     });
-
     if (response.ok) {
       const data = await response.json();
       renderBoards(data);
+    } else {
+      const data = await response.json();
+      if (data.message === '액세스 토큰 오류') {
+        alert('로그인이 필요한 기능입니다.');
+        window.location.href = '/';
+      } else if (data.message === '리프레시 토큰 만료') {
+        alert('로그인이 필요한 기능입니다.');
+        window.location.href = '/';
+      } else if (data.message === '리프레시 토큰 오류') {
+        alert('로그인이 필요한 기능입니다.');
+        window.location.href = '/';
+      }
     }
   } catch (error) {
-    const data = await response.json();
-    if (data.message === '액세스 토큰 오류') {
-      window.location.href = '/html/auth.html';
-    } else if (data.message === '리프레시 토큰 만료') {
-      window.location.href = '/html/auth.html';
-    } else if (data.message === '리프레시 토큰 오류') {
-      window.location.href = '/html/auth.html';
-    }
+    console.log(error);
   }
 });
+
+function renderBoards(data) {
+  const invitedBoards = data.data.invitedBoards;
+  const myBoards = data.data.myBoards;
+  let temp_html = '';
+  let temp_html_v2 = '';
+  invitedBoards.map((board) => {
+    let temp = `
+        <div class="board-box" onclick="redirectToBoardPage(${board.Board.id})">${board.Board.boardName}
+        <span class="custom-icon" onclick="openModal(${board.Board.id},event)">➕</span></div>
+        `;
+    temp_html_v2 += temp;
+  });
+  myBoards.map((board) => {
+    let temp = `
+        <div class="board-box" onclick="redirectToBoardPage(${board.id})">${board.boardName}
+        <span class="custom-icon" onclick="openModal(${board.id},event)">➕</span></div>
+        `;
+    temp_html += temp;
+  });
+  myBoardList.insertAdjacentHTML('beforeend', temp_html);
+  invitedBoardList.insertAdjacentHTML('beforeend', temp_html_v2);
+}
+
+// 보두 추가 버튼 누를 시 실행하는 모달창
 addBoardBtn.addEventListener('click', async () => {
   const addBoardModal = document.querySelector('#addBoardModal');
   const close = document.querySelector('#close');
@@ -39,7 +67,6 @@ addBoardBtn.addEventListener('click', async () => {
   const addBoardColorSelect = document.querySelector('#addBoardColorSelect');
   const addButton = document.querySelector('#addButton');
   const cancleButton = document.querySelector('#cancleButton');
-  console.log(accessToken);
 
   addBoardModal.style.display = 'block';
 
@@ -78,28 +105,7 @@ addBoardBtn.addEventListener('click', async () => {
   };
 });
 
-function renderBoards(data) {
-  const invitedBoards = data.data.invitedBoards;
-  const myBoards = data.data.myBoards;
-  let temp_html = '';
-  let temp_html_v2 = '';
-  invitedBoards.map((board) => {
-    let temp = `
-        <div class="board-box" onclick="redirectToBoardPage(${board.Board.id})">${board.Board.boardName}
-        <span class="custom-icon" onclick="openModal(${board.Board.id},event)">➕</span></div>
-        `;
-    temp_html_v2 += temp;
-  });
-  myBoards.map((board) => {
-    let temp = `
-        <div class="board-box" onclick="redirectToBoardPage(${board.id})">${board.boardName}
-        <span class="custom-icon" onclick="openModal(${board.id},event)">➕</span></div>
-        `;
-    temp_html += temp;
-  });
-  myBoardList.insertAdjacentHTML('beforeend', temp_html);
-  invitedBoardList.insertAdjacentHTML('beforeend', temp_html_v2);
-}
+// 보드 옆 + 버튼을 누를 시 나오는 모달창
 async function openModal(boardId, event) {
   // 모달창 요소 가져오기
   event.stopPropagation();
@@ -220,33 +226,24 @@ function closeModal() {
   modal.style.display = 'none';
 }
 
+// 로그인 누를 시 로그인페이지로 리다이렉트
 function redirectToAuthPage() {
   window.location.href = '/html/auth.html'; // auth.html 페이지로 이동
 }
 
+// 보드 누를 시 board 페이지로 ?boardId=4 이런식으로 페이지 이동
 function redirectToBoardPage(boardId) {
   window.location.href = `/html/board.html?boardId=${boardId}`; // 해당 Board 페이지로 이동
 }
 
-function getCookieValue(cookieName) {
-  const cookies = document.cookie;
-  const cookieArray = cookies.split(';');
-
-  for (const cookie of cookieArray) {
-    const [name, value] = cookie.trim().split('=');
-    if (name === cookieName) {
-      return value;
-    }
-  }
-  return null;
-}
+// + 모달창에 사용자 추가 버튼 클릭시 나오는 새로운 사용자추가 모달창
 inviteUserToBoard.addEventListener('click', async (event) => {
   const parentElement = event.target.parentNode;
   const boardId = parentElement.querySelector('#boardNameSpan').getAttribute('data-board-id');
   await openInviteUserModal(boardId);
 });
 
-// api 호출한 데이터들을 'render ~~' 함수의 인자로 넘겨서 렌더링
+// 모달창이 뜨며 유저 정보들을 호출하는 함수
 async function openInviteUserModal(boardId) {
   try {
     const response = await fetch('/api/users', {
@@ -285,6 +282,7 @@ async function openInviteUserModal(boardId) {
   }
 }
 
+// 모든 사용자 렌더링
 function renderAvailableUsers(users, boardId) {
   availableUsersList.innerHTML = ''; // 목록 초기화
   users.forEach((user) => {
@@ -298,6 +296,7 @@ function renderAvailableUsers(users, boardId) {
   });
 }
 
+// 추가된 렌더링
 function renderInvitedUsers(users, boardId) {
   invitedUsersList.innerHTML = ''; // 목록 초기화
   users.forEach((user) => {
@@ -310,6 +309,8 @@ function renderInvitedUsers(users, boardId) {
     invitedUsersList.appendChild(userItem);
   });
 }
+
+// 모든 사용자에서 + 버튼 누르면 추가되는 함수
 async function inviteUser(userId, userName, boardId) {
   try {
     const response = await fetch(`/api/board/${boardId}/user`, {
@@ -333,13 +334,6 @@ async function inviteUser(userId, userName, boardId) {
       alert(data.message);
     } else {
       const data = await response.json();
-      if (data.message === '액세스 토큰 오류') {
-        window.location.href = '/html/auth.html';
-      } else if (data.message === '리프레시 토큰 만료') {
-        window.location.href = '/html/auth.html';
-      } else if (data.message === '리프레시 토큰 오류') {
-        window.location.href = '/html/auth.html';
-      }
       alert(data.err);
     }
   } catch (error) {
@@ -347,6 +341,7 @@ async function inviteUser(userId, userName, boardId) {
   }
 }
 
+// 추가된 사용자에서 - 버튼 누르면 삭제되는 함수
 async function removeInvitedUser(userId, userName, boardId) {
   try {
     const response = await fetch(`/api/board/${boardId}/users`, {
@@ -366,14 +361,6 @@ async function removeInvitedUser(userId, userName, boardId) {
       }
       alert(data.message);
     } else {
-      const data = await response.json();
-      if (data.message === '액세스 토큰 오류') {
-        window.location.href = '/html/auth.html';
-      } else if (data.message === '리프레시 토큰 만료') {
-        window.location.href = '/html/auth.html';
-      } else if (data.message === '리프레시 토큰 오류') {
-        window.location.href = '/html/auth.html';
-      }
       alert(data.err);
     }
   } catch (error) {
