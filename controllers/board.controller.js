@@ -60,8 +60,8 @@ class BoardController {
     try {
       const userId = req.user.userId;
       const { boardId } = req.params;
-      const { adduserId } = req.body;
-      const result = await this.boardService.addUserToBoard(userId, boardId, adduserId);
+      const { addUserId } = req.body;
+      const result = await this.boardService.addUserToBoard(userId, boardId, addUserId);
       if (result.data) return res.status(result.code).json({ data: result.data });
       return res.status(result.code).json({ message: result.message });
     } catch (err) {
