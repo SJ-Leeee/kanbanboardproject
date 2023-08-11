@@ -1,0 +1,39 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background-color: #38495a;
+  color: #fff;
+}
+
+header {
+  background-color: #2e3e4e;
+  padding: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+h1 {
+  margin-left: 30px;
+}
+
+.button-container {
+  display: flex;
+  align-items: center;
+}
+
+button {
+  margin: 10px;
+  padding: 5px 10px;
+  border: none;
+  cursor: pointer;
+  border-radius: 20px;
+}
+
+.logout {
+  margin-left: auto;
+}
