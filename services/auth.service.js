@@ -62,7 +62,15 @@ class AuthService {
     await this.authRepository.updateUserLoginId(userId, newLoginId);
   };
 
-  updatePassword = async (userId, newPassword) => {
+  updatePassword = async (userId, newPassword, confirmPassword) => {
+    const user = await this.authRepository.findUserByUserId(userId);
+
+    const isSame = await bcrypt.compare(confirmPassword, user.password);
+
+    if (!isSame) {
+      throw { errorCode: 401, message: '비밀번호가 일치하지 않습니다.' };
+    }
+
     const hashedPassword = await bcrypt.hash(newPassword, 10);
     await this.authRepository.updateUserPassword(userId, hashedPassword);
   };
@@ -71,7 +79,7 @@ class AuthService {
     await this.authRepository.updateUserUserName(userId, newUserName);
   };
 
-  getUserInfoByLoginId = async (loginId) => {
+  getUserInfo = async (loginId) => {
     const user = await this.authRepository.findUserByUserId(loginId);
     return user;
   };

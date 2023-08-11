@@ -21,6 +21,10 @@ h1 {
   margin-left: 30px;
 }
 
+button.logout {
+  border-radius: 20px;
+}
+
 .button-container {
   display: flex;
   align-items: center;
@@ -31,9 +35,78 @@ button {
   padding: 5px 10px;
   border: none;
   cursor: pointer;
-  border-radius: 20px;
+}
+
+button.username,
+button.id,
+button.password {
+  margin-right: 20px;
+  border-radius: 5px;
+}
+
+button.delete-account {
+  border-radius: 5px;
+}
+
+.form {
+  display: flex;
+  align-items: center; /* 수직 가운데 정렬 */
+}
+
+.form form {
+  display: flex;
+  align-items: center; /* 수직 가운데 정렬 */
+}
+
+.form input[type='text'] {
+  width: 400px;
+  padding: 5px 10px;
+  border: none;
+  border-radius: 5px;
+}
+
+#changePasswordForm #input-password,
+#input-confirmpassword {
+  width: 200px;
+}
+
+.form button {
+  margin-left: 0;
+  padding: 5px 10px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
 }
 
 .logout {
   margin-left: auto;
+}
+
+main {
+  font-size: x-large;
+  width: 90%;
+  max-width: 100%;
+  margin: 0 auto;
+  padding-bottom: 5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 5rem;
+  align-items: center;
+}
+
+.wrapper {
+  padding: auto auto 0px auto;
+  width: 50%;
+  height: 100px;
+  display: flex;
+  flex-direction: row;
+  align-items: flex-end;
+  justify-content: space-between;
+  border-style: hidden hidden solid hidden;
+  border-width: 1px;
+}
+
+h4 {
+  margin-left: 10px;
 }

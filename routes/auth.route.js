@@ -18,6 +18,6 @@ router.patch('/account/password/', authmiddleware.authenticateAccessToken, authC
 
 router.patch('/account/userName/', authmiddleware.authenticateAccessToken, authController.updateUserName);
 
-router.get('/account/', authmiddleware.authenticateAccessToken, authController.getUserInfo);
+router.get('/account', authmiddleware.authenticateAccessToken, authController.getUserInfo);
 
 module.exports = router;
