@@ -83,9 +83,9 @@ class AuthController {
   updatePassword = async (req, res) => {
     try {
       const userId = req.user.userId;
-      const { password } = req.body;
+      const { password, confirmpassword } = req.body;
 
-      await this.authService.updatePassword(userId, password);
+      await this.authService.updatePassword(userId, password, confirmpassword);
 
       return res.status(200).json({ message: '비밀번호 업데이트 성공' });
     } catch (error) {
@@ -116,7 +116,9 @@ class AuthController {
     try {
       const userId = req.user.userId;
 
-      const user = await this.authService.getUserInfoByUserId(userId);
+      console.log('🚀 ~ file: auth.controller.js:119 ~ AuthController ~ getUserInfo= ~ userId:', userId);
+
+      const user = await this.authService.getUserInfo(userId);
 
       if (!user) {
         return res.status(404).json({ message: '사용자를 찾을 수 없습니다.' });
