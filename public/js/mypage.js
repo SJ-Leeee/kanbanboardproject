@@ -162,6 +162,8 @@ document.addEventListener('DOMContentLoaded', async () => {
         window.location.href = '/';
       } else if (data.message === '리프레시 토큰 오류') {
         window.location.href = '/';
+      } else if (data.message === '리프레시 토큰이 없습니다.') {
+        window.location.href = '/';
       }
       alert(data.err);
     }
@@ -366,15 +368,29 @@ function redirectToBoardPage(boardId) {
   window.location.href = `/html/board.html?boardId=${boardId}`; // 해당 Board 페이지로 이동
 }
 
-function getCookieValue(cookieName) {
-  const cookies = document.cookie;
-  const cookieArray = cookies.split(';');
+const logout = document.querySelector('.logout');
 
-  for (const cookie of cookieArray) {
-    const [name, value] = cookie.trim().split('=');
-    if (name === cookieName) {
-      return value;
+logout.addEventListener('click', async () => {
+  try {
+    const response = await fetch('/api/logout', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+
+    if (response.ok) {
+      // alert('로그아웃 되었습니다.');
+      window.location.href = '/';
+    } else {
+      const data = response.json();
+      alert(`로그아웃 실패: ${data.message}`);
     }
+  } catch (error) {
+    console.log(error);
   }
-  return null;
+});
+
+function redirectTomyInfo() {
+  window.location.href = '/html/myinfo.html';
 }
