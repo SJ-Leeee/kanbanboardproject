@@ -256,7 +256,9 @@ columnBtn.addEventListener('click', async () => {
       const columnSet = `
                         <div class="column" draggable="true" id="${result.data.id}">
                           <h2 class="column-title" id="${result.data.location}">${result.data.columnName}</h2>
+                          <h2 class="column-title" id="${result.data.location}">${result.data.columnName}</h2>
                           <div class="card">Card 1</div>
+                          <button id="cardBtn">카드 조회</button>
                           <button id="cardBtn">카드 조회</button>
                           <button class="add-card-button">Add Card</button>
                           <button class="delete-column-button">delete</button>

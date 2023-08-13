@@ -28,6 +28,8 @@ document.addEventListener('DOMContentLoaded', async () => {
       } else if (data.message === '리프레시 토큰 오류') {
         alert('로그인이 필요한 기능입니다.');
         window.location.href = '/';
+      } else if (data.message === '리프레시 토큰이 없습니다.') {
+        window.location.href = '/';
       }
     }
   } catch (error) {
@@ -258,9 +260,32 @@ inviteUserToBoard.addEventListener('click', async (event) => {
   const boardId = parentElement.querySelector('#boardNameSpan').getAttribute('data-board-id');
   await openInviteUserModal(boardId);
 });
+const logout = document.querySelector('.logout');
 
-// 모달창이 뜨며 유저 정보들을 호출하는 함수
-async function openInviteUserModal(boardId) {
+logout.addEventListener('click', async () => {
+  try {
+    const response = await fetch('/api/logout', {
+      method: 'POST',
+       headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+    if (response.ok) {
+      // alert('로그아웃 되었습니다.');
+      window.location.href = '/';
+    } else {
+      const data = response.json();
+      alert(`로그아웃 실패: ${data.message}`);
+    }
+  } catch (error) {
+    console.log(error);
+  }
+});
+
+function redirectTomyInfo() {
+  window.location.href = '/html/myinfo.html';
+    // 모달창이 뜨며 유저 정보들을 호출하는 함수
+    async function openInviteUserModal(boardId) {
   try {
     const response = await fetch('/api/users', {
       method: 'GET',

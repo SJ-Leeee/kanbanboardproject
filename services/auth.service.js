@@ -52,8 +52,36 @@ class AuthService {
   logOut = async (userId) => {
     const user = await this.authRepository.findUserByUserId(userId);
 
+    console.log('🚀 ~ file: auth.service.js:55 ~ AuthService ~ logOut= ~ user:', user);
+
     // Redis에서 해당 사용자의 리프레시 토큰 삭제
-    await this.redisClient.del(user.loginId.toString());
+    await this.redisClient.del(user.id.toString());
+  };
+
+  updateLoginId = async (userId, newLoginId) => {
+    await this.authRepository.updateUserLoginId(userId, newLoginId);
+  };
+
+  updatePassword = async (userId, newPassword, confirmPassword) => {
+    const user = await this.authRepository.findUserByUserId(userId);
+
+    const isSame = await bcrypt.compare(confirmPassword, user.password);
+
+    if (!isSame) {
+      throw { errorCode: 401, message: '비밀번호가 일치하지 않습니다.' };
+    }
+
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+    await this.authRepository.updateUserPassword(userId, hashedPassword);
+  };
+
+  updateUserName = async (userId, newUserName) => {
+    await this.authRepository.updateUserUserName(userId, newUserName);
+  };
+
+  getUserInfo = async (loginId) => {
+    const user = await this.authRepository.findUserByUserId(loginId);
+    return user;
   };
 }
 
