@@ -239,6 +239,138 @@ document.addEventListener('DOMContentLoaded', async (e) => {
     console.log(err);
     return alert('컬럼 조회에 실패하였습니다.');
   }
+  // 수정버튼 생성 함수 정의
+  function createEditButton() {
+    const editButton = document.createElement('button');
+    editButton.classList.add('edit-comment-button');
+    editButton.textContent = '수정';
+    return editButton;
+  }
+  // 삭제버튼 생성 함수 정의
+  function createDeleteButton() {
+    const deleteButton = document.createElement('button');
+    deleteButton.classList.add('delete-comment-button');
+    deleteButton.textContent = '삭제';
+    return deleteButton;
+  }
+  board.addEventListener('click', async (e) => {
+    const parentCard = e.target.closest('.card');
+    console.log(parentCard);
+    const cardId = parentCard.id;
+
+    // 댓글 추가부분
+    if (e.target.classList.contains('add-comment-button')) {
+      const commentText = prompt('댓글을 입력해주세요.');
+
+      if (!commentText || commentText.trim() === '') {
+        alert('댓글 생성을 취소하였습니다.');
+      } else {
+        try {
+          const createCommentResponse = await fetch(`/api/cards/${cardId}/comments`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ commentText }),
+          });
+
+          const createCommentData = await createCommentResponse.json();
+
+          if (createCommentData.errorMessage) {
+            alert(createCommentData.errorMessage);
+          } else {
+            alert('댓글이 성공적으로 작성되었습니다.');
+            const newComment = document.createElement('div');
+            newComment.classList.add('comment');
+            // 추가: comment-text를 감싸는 span 요소를 만들고 붙입니다.
+            const commentTextElement = document.createElement('span');
+            commentTextElement.classList.add('comment-text');
+            commentTextElement.textContent = createCommentData.data.commentText;
+            newComment.appendChild(commentTextElement);
+
+            const editButton = createEditButton();
+            editButton.addEventListener('click', handleEditButtonClick);
+            newComment.appendChild(editButton);
+
+            const deleteButton = createDeleteButton();
+            deleteButton.addEventListener('click', handleDeleteButtonClick);
+            newComment.appendChild(deleteButton);
+
+            parentCard.appendChild(newComment);
+          }
+        } catch (err) {
+          console.log(err);
+          return alert('댓글 작성에 실패하였습니다.');
+        }
+      }
+      // 댓글 수정부분
+    } else if (e.target.classList.contains('edit-comment-button')) {
+      handleEditButtonClick(e, cardId);
+    } // 댓글 삭제부분
+    else if (e.target.classList.contains('delete-comment-button')) {
+      handleDeleteButtonClick(e, cardId);
+    }
+  });
+  async function handleEditButtonClick(e, cardId) {
+    e.stopPropagation();
+    const commentElement = e.target.closest('.comment');
+    const id = commentElement.dataset.commentId;
+
+    const commentTextElement = commentElement.querySelector('.comment-text');
+    const commentText = prompt('댓글을 수정해주세요.', commentTextElement.textContent);
+
+    if (!commentText || commentText.trim() === '') {
+      return alert('댓글 수정을 취소하였습니다.');
+    }
+    // 댓글수정
+    try {
+      const updateCommentResponse = await fetch(`/api/cards/${cardId}/comments/${id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ commentText }),
+      });
+      const updateCommentData = await updateCommentResponse.json();
+      if (updateCommentData.errorMessage) {
+        alert(updateCommentData.errorMessage);
+      } else {
+        alert('댓글이 성공적으로 수정되었습니다.');
+        commentTextElement.textContent = commentText;
+      }
+    } catch (err) {
+      console.log(err);
+      return alert('댓글 수정에 실패하였습니다.');
+    }
+  }
+  // 댓글삭제
+  async function handleDeleteButtonClick(e, cardId) {
+    e.stopPropagation();
+    const commentElement = e.target.closest('.comment');
+    const id = commentElement.dataset.commentId;
+
+    if (confirm('댓글을 삭제하시겠습니까?')) {
+      try {
+        const deleteCommentResponse = await fetch(`/api/cards/${cardId}/comments/${id}`, {
+          method: 'DELETE',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        });
+
+        const deleteCommentData = await deleteCommentResponse.json();
+        if (deleteCommentData.errorMessage) {
+          alert(deleteCommentData.errorMessage);
+        } else {
+          alert('댓글이 성공적으로 삭제되었습니다.');
+          commentElement.remove();
+        }
+      } catch (err) {
+        console.log(err);
+        return alert('댓글 삭제에 실패하였습니다.');
+      }
+    }
+  }
 });
 
 // 컬럼 생성
