@@ -6,6 +6,42 @@ const columnBtn = document.querySelector('#columnBtn');
 const params = new URLSearchParams(window.location.search);
 const boardId = params.get('boardId');
 
+// 보드의 제목 설명을 넣는 부분입니다. 시호님이 보내주신 accesstoken 값이 없으면 main 페이지로 반환하는 코드는 여기다 넣어두었습니다 (리다이렉트 코드는 한개만 있으면 되서 따로 추가하지 않으셔도 됩니다.)
+document.addEventListener('DOMContentLoaded', async () => {
+  const headerMiddle = document.querySelector('.header-middle');
+  const headerRight = document.querySelector('.header-right');
+  try {
+    const response = await fetch(`/api/board/${boardId}`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+    if (response.ok) {
+      const data = await response.json();
+      const boardData = data.data;
+      let temp_html = `<h1 class="board-name">${boardData.boardName}</h1>`;
+      let temp_html_v2 = `<p class="board-desc">${boardData.boardDesc}</p>`;
+      headerMiddle.innerHTML = temp_html;
+      headerRight.innerHTML = temp_html_v2;
+    } else {
+      const data = await response.json();
+      if (data.message === '액세스 토큰 오류') {
+        alert('로그인이 필요한 기능입니다.');
+        window.location.href = '/';
+      } else if (data.message === '리프레시 토큰 만료') {
+        alert('로그인이 필요한 기능입니다.');
+        window.location.href = '/';
+      } else if (data.message === '리프레시 토큰 오류') {
+        alert('로그인이 필요한 기능입니다.');
+        window.location.href = '/';
+      }
+    }
+  } catch (err) {
+    console.log(err);
+  }
+});
+
 // 컬럼 조회
 document.addEventListener('DOMContentLoaded', async (e) => {
   // 컬럼조회 API fetch
