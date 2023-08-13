@@ -255,7 +255,7 @@ document.addEventListener('DOMContentLoaded', async (e) => {
   }
   board.addEventListener('click', async (e) => {
     const parentCard = e.target.closest('.card');
-    console.log(parentCard);
+
     const cardId = parentCard.id;
 
     // 댓글 추가부분
