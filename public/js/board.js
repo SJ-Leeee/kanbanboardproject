@@ -44,7 +44,6 @@ document.addEventListener('DOMContentLoaded', async () => {
   }
 });
 
-
 // 컬럼 조회
 document.addEventListener('DOMContentLoaded', async (e) => {
   // 컬럼조회 API fetch
@@ -57,7 +56,6 @@ document.addEventListener('DOMContentLoaded', async (e) => {
     });
     // fetch로 받아온 data 제이슨화
     const getColumnData = await getColumnResponse.json();
-
     if (getColumnData.message) return alert(getColumnData.message);
     // 가공한 데이터 location의 내림차순으로 정렬해서 할당
     const descColumn = getColumnData.data.sort((a, b) => {
@@ -80,7 +78,6 @@ document.addEventListener('DOMContentLoaded', async (e) => {
     });
     // 응답 출력
     if (getColumnData.errorMessage) alert(getColumnData.errorMessage);
-
     // 카드 조회
     document.querySelector('#cardBtn').addEventListener('click', async (e) => {
       const columnId = e.target.parentNode.id;
@@ -92,7 +89,6 @@ document.addEventListener('DOMContentLoaded', async (e) => {
       });
       await getCardsData.json().then((result) => {
         result.data.forEach((a) => {
-
           document.querySelector('.card-list').innerHTML = `
                                                             <h2>${a.cardName}</h2>
                                                             <p>${a.cardDesc}</p>
@@ -105,7 +101,6 @@ document.addEventListener('DOMContentLoaded', async (e) => {
         result.errorMessage ? alert('오류') : alert('조회 성공');
       });
     });
-
     // 드래그 앤 드랍
     const columns = document.querySelectorAll('.column');
     columns.forEach((column) => {
@@ -113,18 +108,15 @@ document.addEventListener('DOMContentLoaded', async (e) => {
         column.classList.add('dragging');
         e.dataTransfer.setData('text/plain', column.id);
       });
-
       column.addEventListener('dragend', async (e) => {
         column.classList.remove('dragging');
       });
     });
-
     board.addEventListener('dragover', (e) => {
       e.preventDefault();
       const drag = document.querySelector('.dragging');
       board.appendChild(drag);
     });
-
     // 카드 생성
     const addCardBtnTag = document.querySelectorAll('.add-card-button');
     addCardBtnTag.forEach((addCardBtn) => {
@@ -145,10 +137,10 @@ document.addEventListener('DOMContentLoaded', async (e) => {
         const cardColor = document.querySelector('.card-color-input').value;
         const assignee = document.querySelector('.assignee-input').value;
         // addCard 함수호출
-        await addCard(columnId, cardName, cardDesc, cardColor, assignee, accessToken);
+        await addCard(columnId, cardName, cardDesc, cardColor, assignee);
       });
       // create card fetch
-      async function addCard(columnId, cardName, cardDesc, cardColor, assignee, accessToken) {
+      async function addCard(columnId, cardName, cardDesc, cardColor, assignee) {
         const response = await fetch(`/api/cards/${columnId}`, {
           method: 'POST',
           headers: {
@@ -163,88 +155,83 @@ document.addEventListener('DOMContentLoaded', async (e) => {
         });
         const cardCreateData = await response.json();
         cardCreateData.errorMessage ? alert(cardCreateData.errorMessage) : alert(cardCreateData.message);
-
-        // create card fetch
-        async function addCard(columnId, cardName, cardDesc, cardColor, assignee) {
-          const response = await fetch(`/api/cards/${columnId}`, {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-              cardName,
-              cardDesc,
-              cardColor,
-              assignee,
-            }),
-          });
-          const cardCreateData = await response.json();
-          cardCreateData.errorMessage ? alert(cardCreateData.errorMessage) : alert(cardCreateData.message);
-
-          window.location.reload();
-        }
-      });
-    });
-
-    // 컬럼 삭제
-    const deleteButtons = document.querySelectorAll('.delete-column-button');
-    deleteButtons.forEach((deleteBtn) => {
-      deleteBtn.addEventListener('click', async (e) => {
-        // columnId
-        const columnId = e.target.parentNode.id;
-        // 컬럼삭제 API fetch
-        const deleteResponse = await fetch(`/api/boards/${boardId}/columns/${columnId}`, {
-          method: 'DELETE',
+      }
+      // create card fetch
+      async function addCard(columnId, cardName, cardDesc, cardColor, assignee) {
+        const response = await fetch(`/api/cards/${columnId}`, {
+          method: 'POST',
           headers: {
             'Content-Type': 'application/json',
           },
+          body: JSON.stringify({
+            cardName,
+            cardDesc,
+            cardColor,
+            assignee,
+          }),
         });
-        // fetch로 받아온 data 가공
-        await deleteResponse.json().then((result) => {
-          result.errorMessage ? alert(result.errorMessage) : alert(result.message);
-          window.location.reload();
+        const cardCreateData = await response.json();
+        cardCreateData.errorMessage ? alert(cardCreateData.errorMessage) : alert(cardCreateData.message);
+        window.location.reload();
+      }
+      // 컬럼 삭제
+      const deleteButtons = document.querySelectorAll('.delete-column-button');
+      deleteButtons.forEach((deleteBtn) => {
+        deleteBtn.addEventListener('click', async (e) => {
+          // columnId
+          const columnId = e.target.parentNode.id;
+          // 컬럼삭제 API fetch
+          const deleteResponse = await fetch(`/api/boards/${boardId}/columns/${columnId}`, {
+            method: 'DELETE',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+          });
+          // fetch로 받아온 data 가공
+          await deleteResponse.json().then((result) => {
+            result.errorMessage ? alert(result.errorMessage) : alert(result.message);
+            window.location.reload();
+          });
         });
       });
-    });
-
-    // 컬럼명 변경
-    const h2Tag = document.querySelectorAll('.column-title');
-    h2Tag.forEach((title) => {
-      title.addEventListener('click', (e) => {
-        // 현재 사용중인 제목 변수처리
-        const useTitle = title.textContent;
-        // 각 제목의 html 형식을 input 태그로 바꿔주고, value 값에 할당 변수 사용
-        title.innerHTML = `<input type="text" value="${useTitle}" class="edit-input">`;
-
-        const inputTag = title.querySelector('.edit-input');
-        inputTag.focus();
-        // 커서위치 맨 뒤로
-        inputTag.selectionStart = useTitle.length;
-        // 포커스를 벗어날 시 기존 제목으로 변경
-        inputTag.addEventListener('blur', (e) => {
-          window.location.reload();
-        });
-        // keydown 이벤트리스너
-        inputTag.addEventListener('keydown', async (e) => {
-          // columnId
-          const columnId = e.target.parentNode.parentNode.id;
-          // 컬럼명 변경 API fetch
-          if (e.key === 'Enter') {
-            const columnName = inputTag.value;
-            const changeColumnNameResponse = await fetch(`/api/boards/${boardId}/columns/${columnId}`, {
-              method: 'PUT',
-              headers: {
-                'Content-Type': 'application/json',
-              },
-              body: JSON.stringify({ columnName }),
-            });
-            // fetch로 받아온 data 가공
-            await changeColumnNameResponse.json().then((result) => {
-              h2Tag.innerHTML = `<h2 class="column-title">${columnName}</h2>`;
-              result.errorMessage ? alert(result.errorMessage) : alert(result.message);
-              window.location.reload();
-            });
-          }
+      // 컬럼명 변경
+      const h2Tag = document.querySelectorAll('.column-title');
+      h2Tag.forEach((title) => {
+        title.addEventListener('click', (e) => {
+          // 현재 사용중인 제목 변수처리
+          const useTitle = title.textContent;
+          // 각 제목의 html 형식을 input 태그로 바꿔주고, value 값에 할당 변수 사용
+          title.innerHTML = `<input type="text" value="${useTitle}" class="edit-input">`;
+          const inputTag = title.querySelector('.edit-input');
+          inputTag.focus();
+          // 커서위치 맨 뒤로
+          inputTag.selectionStart = useTitle.length;
+          // 포커스를 벗어날 시 기존 제목으로 변경
+          inputTag.addEventListener('blur', (e) => {
+            window.location.reload();
+          });
+          // keydown 이벤트리스너
+          inputTag.addEventListener('keydown', async (e) => {
+            // columnId
+            const columnId = e.target.parentNode.parentNode.id;
+            // 컬럼명 변경 API fetch
+            if (e.key === 'Enter') {
+              const columnName = inputTag.value;
+              const changeColumnNameResponse = await fetch(`/api/boards/${boardId}/columns/${columnId}`, {
+                method: 'PUT',
+                headers: {
+                  'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ columnName }),
+              });
+              // fetch로 받아온 data 가공
+              await changeColumnNameResponse.json().then((result) => {
+                h2Tag.innerHTML = `<h2 class="column-title">${columnName}</h2>`;
+                result.errorMessage ? alert(result.errorMessage) : alert(result.message);
+                window.location.reload();
+              });
+            }
+          });
         });
       });
     });
