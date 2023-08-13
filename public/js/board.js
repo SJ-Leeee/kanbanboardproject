@@ -1,3 +1,5 @@
+// board.js
+
 // main tag
 const board = document.querySelector('.board');
 // create-column button tag
@@ -41,6 +43,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     console.log(err);
   }
 });
+
 
 // 컬럼 조회
 document.addEventListener('DOMContentLoaded', async (e) => {
@@ -89,7 +92,8 @@ document.addEventListener('DOMContentLoaded', async (e) => {
       });
       await getCardsData.json().then((result) => {
         result.data.forEach((a) => {
-          document.querySelector('.card-list').innerHTML = `<div class="card-list">
+
+          document.querySelector('.card-list').innerHTML = `
                                                             <h2>${a.cardName}</h2>
                                                             <p>${a.cardDesc}</p>
                                                             <p>${a.cardColor}</p>
@@ -141,7 +145,24 @@ document.addEventListener('DOMContentLoaded', async (e) => {
         const cardColor = document.querySelector('.card-color-input').value;
         const assignee = document.querySelector('.assignee-input').value;
         // addCard 함수호출
-        await addCard(columnId, cardName, cardDesc, cardColor, assignee);
+        await addCard(columnId, cardName, cardDesc, cardColor, assignee, accessToken);
+      });
+      // create card fetch
+      async function addCard(columnId, cardName, cardDesc, cardColor, assignee, accessToken) {
+        const response = await fetch(`/api/cards/${columnId}`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            cardName,
+            cardDesc,
+            cardColor,
+            assignee,
+          }),
+        });
+        const cardCreateData = await response.json();
+        cardCreateData.errorMessage ? alert(cardCreateData.errorMessage) : alert(cardCreateData.message);
 
         // create card fetch
         async function addCard(columnId, cardName, cardDesc, cardColor, assignee) {
