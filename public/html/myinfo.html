@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Info</title>
+  </head>
+  <link rel="stylesheet" href="../css/myinfo.css" />
+  <body>
+    <header>
+      <h1>Thrillo</h1>
+      <div class="button-container">
+        <button type="button" class="logout">로그아웃</button>
+      </div>
+    </header>
+    <main>
+      <div class="wrapper"><h2 id="usernamePlaceholder"></h2></div>
+      <div class="wrapper">
+        <h4>Change Id</h4>
+        <div class="wrapper-content">
+          <button type="button" class="id" id="changeIdBtn">Change Id</button>
+          <div class="form" id="changeIdForm" style="display: none">
+            <form>
+              <input type="text" id="input-id" />
+              <button type="button" class="input-id">Change</button>
+            </form>
+          </div>
+        </div>
+      </div>
+      <div class="wrapper">
+        <h4>Change username</h4>
+        <div class="wrapper-content">
+          <button type="button" class="username" id="changeUsernameBtn">Change username</button>
+          <div class="form" id="changeUsernameForm" style="display: none">
+            <form>
+              <input type="text" id="input-username" />
+              <button type="button" class="input-username">Change</button>
+            </form>
+          </div>
+        </div>
+      </div>
+      <div class="wrapper">
+        <h4>Change password</h4>
+        <div class="wrapper-content">
+          <button type="button" class="password" id="changePasswordBtn">Change password</button>
+          <div class="form" id="changePasswordForm" style="display: none">
+            <form>
+              <input type="text" id="input-password" placeholder="password" />
+              <input type="text" id="input-confirmpassword" placeholder="confirmpassword" />
+              <button type="button" class="input-password">Change</button>
+            </form>
+          </div>
+        </div>
+      </div>
+      <div class="wrapper">
+        <h3>Delete Account</h3>
+        <div class="wrapper-content">
+          <button type="button" class="delete-account">Delete Account</button>
+        </div>
+      </div>
+    </main>
+    <script src="../js/myinfo.js"></script>
+  </body>
+</html>

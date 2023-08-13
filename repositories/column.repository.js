@@ -15,9 +15,7 @@ class ColumnRepository {
   };
   // 컬럼 조회
   findAllColumn = async (boardId) => {
-    const columns = await Columns.findAll({ where: { boardId } });
-    // 반환값
-    return columns;
+    return await Columns.findAll({ where: { boardId } });
   };
   // 컬럼명 수정
   updateColumn = async (boardId, columnId, columnName) => {

@@ -8,6 +8,43 @@ const columnBtn = document.querySelector('#columnBtn');
 const params = new URLSearchParams(window.location.search);
 const boardId = params.get('boardId');
 
+// 보드의 제목 설명을 넣는 부분입니다. 시호님이 보내주신 accesstoken 값이 없으면 main 페이지로 반환하는 코드는 여기다 넣어두었습니다 (리다이렉트 코드는 한개만 있으면 되서 따로 추가하지 않으셔도 됩니다.)
+document.addEventListener('DOMContentLoaded', async () => {
+  const headerMiddle = document.querySelector('.header-middle');
+  const headerRight = document.querySelector('.header-right');
+  try {
+    const response = await fetch(`/api/board/${boardId}`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+    if (response.ok) {
+      const data = await response.json();
+      const boardData = data.data;
+      let temp_html = `<h1 class="board-name">${boardData.boardName}</h1>`;
+      let temp_html_v2 = `<p class="board-desc">${boardData.boardDesc}</p>`;
+      headerMiddle.innerHTML = temp_html;
+      headerRight.innerHTML = temp_html_v2;
+    } else {
+      const data = await response.json();
+      if (data.message === '액세스 토큰 오류') {
+        alert('로그인이 필요한 기능입니다.');
+        window.location.href = '/';
+      } else if (data.message === '리프레시 토큰 만료') {
+        alert('로그인이 필요한 기능입니다.');
+        window.location.href = '/';
+      } else if (data.message === '리프레시 토큰 오류') {
+        alert('로그인이 필요한 기능입니다.');
+        window.location.href = '/';
+      }
+    }
+  } catch (err) {
+    console.log(err);
+  }
+});
+
+
 // 컬럼 조회
 document.addEventListener('DOMContentLoaded', async (e) => {
   // 컬럼조회 API fetch
@@ -20,6 +57,8 @@ document.addEventListener('DOMContentLoaded', async (e) => {
     });
     // fetch로 받아온 data 제이슨화
     const getColumnData = await getColumnResponse.json();
+
+    if (getColumnData.message) return alert(getColumnData.message);
     // 가공한 데이터 location의 내림차순으로 정렬해서 할당
     const descColumn = getColumnData.data.sort((a, b) => {
       a.location - b.location;
@@ -39,10 +78,8 @@ document.addEventListener('DOMContentLoaded', async (e) => {
       // 화면에 HTML 띄우기
       board.insertBefore(document.createRange().createContextualFragment(columnSet), columnBtn);
     });
-    // 오류 출력
-    if (getColumnData.errorMessage) {
-      return alert(getColumnData.errorMessage);
-    }
+    // 응답 출력
+    if (getColumnData.errorMessage) alert(getColumnData.errorMessage);
 
     // 카드 조회
     document.querySelector('#cardBtn').addEventListener('click', async (e) => {
@@ -55,12 +92,14 @@ document.addEventListener('DOMContentLoaded', async (e) => {
       });
       await getCardsData.json().then((result) => {
         result.data.forEach((a) => {
+
           document.querySelector('.card-list').innerHTML = `
                                                             <h2>${a.cardName}</h2>
                                                             <p>${a.cardDesc}</p>
                                                             <p>${a.cardColor}</p>
                                                             <p>${a.dueDate}</p>
                                                             <button class="add-comment-button">댓글추가</button>
+                                                            </div>
                                                             `;
         });
         result.errorMessage ? alert('오류') : alert('조회 성공');
@@ -93,11 +132,12 @@ document.addEventListener('DOMContentLoaded', async (e) => {
         // columnsId
         const columnId = e.target.parentNode.id;
         const cardNeed = document.querySelector('.card');
-        cardNeed.innerHTML = `
+        cardNeed.innerHTML = `<div class="card-list">
                               <input type="text" value="Card Example" class="card-name-input">
                               <input type="text" value="카드 예시 입니다." class="card-description-input">
                               <input type="text" value="핑꾸핑꾸 핫핑쿠쨩" class="card-color-input">
                               <input type="text" value="1" class="assignee-input">
+                              </div>
                              `;
         // card needs
         const cardName = document.querySelector('.card-name-input').value;
@@ -124,8 +164,26 @@ document.addEventListener('DOMContentLoaded', async (e) => {
         const cardCreateData = await response.json();
         cardCreateData.errorMessage ? alert(cardCreateData.errorMessage) : alert(cardCreateData.message);
 
-        window.location.reload();
-      }
+        // create card fetch
+        async function addCard(columnId, cardName, cardDesc, cardColor, assignee) {
+          const response = await fetch(`/api/cards/${columnId}`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              cardName,
+              cardDesc,
+              cardColor,
+              assignee,
+            }),
+          });
+          const cardCreateData = await response.json();
+          cardCreateData.errorMessage ? alert(cardCreateData.errorMessage) : alert(cardCreateData.message);
+
+          window.location.reload();
+        }
+      });
     });
 
     // 컬럼 삭제
@@ -219,7 +277,9 @@ columnBtn.addEventListener('click', async () => {
       const columnSet = `
                         <div class="column" draggable="true" id="${result.data.id}">
                           <h2 class="column-title" id="${result.data.location}">${result.data.columnName}</h2>
+                          <h2 class="column-title" id="${result.data.location}">${result.data.columnName}</h2>
                           <div class="card">Card 1</div>
+                          <button id="cardBtn">카드 조회</button>
                           <button id="cardBtn">카드 조회</button>
                           <button class="add-card-button">Add Card</button>
                           <button class="delete-column-button">delete</button>
