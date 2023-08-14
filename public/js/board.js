@@ -91,7 +91,7 @@ document.addEventListener('DOMContentLoaded', async (e) => {
         e.dataTransfer.setData('text/plain', column.id);
       });
 
-      column.addEventListener('dragend', async (e) => {
+      column.addEventListener('dragend', (e) => {
         column.classList.remove('dragging');
       });
     });
@@ -99,7 +99,7 @@ document.addEventListener('DOMContentLoaded', async (e) => {
     board.addEventListener('dragover', (e) => {
       e.preventDefault();
       const drag = document.querySelector('.dragging');
-      board.appendChild(drag);
+      board.insertBefore(drag, e.target);
     });
 
     // 카드 생성
