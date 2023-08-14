@@ -29,6 +29,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         alert('로그인이 필요한 기능입니다.');
         window.location.href = '/html/auth.html';
       } else if (data.message === '리프레시 토큰이 없습니다.') {
+        alert('로그인이 필요한 기능입니다.');
         window.location.href = '/html/auth.html';
       }
     }
@@ -271,7 +272,7 @@ logout.addEventListener('click', async () => {
       },
     });
     if (response.ok) {
-      // alert('로그아웃 되었습니다.');
+      alert('로그아웃 되었습니다.');
       window.location.href = '/html/auth.html';
     } else {
       const data = response.json();

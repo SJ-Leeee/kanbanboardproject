@@ -37,6 +37,9 @@ document.addEventListener('DOMContentLoaded', async () => {
       } else if (data.message === '리프레시 토큰 오류') {
         alert('로그인이 필요한 기능입니다.');
         window.location.href = '/html/auth.html';
+      } else if (data.message === '리프레시 토큰이 없습니다.') {
+        alert('로그인이 필요한 기능입니다.');
+        window.location.href = '/html/auth.html';
       }
     }
   } catch (err) {
@@ -146,9 +149,9 @@ document.addEventListener('DOMContentLoaded', async (e) => {
         const columnId = e.target.parentNode.id;
         const cardNeed = document.querySelector('.card');
         cardNeed.innerHTML = `
-                              <input type="text" value="Card Example" class="card-name-input">
-                              <input type="text" value="카드 예시 입니다." class="card-description-input">
-                              <input type="text" value="핑꾸핑꾸 핫핑쿠쨩" class="card-color-input">
+                              <input type="text" value="카드 예시 입니다." class="card-name-input">
+                              <input type="text" value="카드 제목입니다." class="card-description-input">
+                              <input type="text" value="카드 본문입니다." class="card-color-input">
                               <input type="text" value="2023-08-30" class="dueDate-input">
                               <input type="text" value="1" class="assignee-input">
                              `;
