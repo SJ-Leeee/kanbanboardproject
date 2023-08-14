@@ -284,133 +284,133 @@ logout.addEventListener('click', async () => {
 
 function redirectTomyInfo() {
   window.location.href = '/html/myinfo.html';
-  // 모달창이 뜨며 유저 정보들을 호출하는 함수
-  async function openInviteUserModal(boardId) {
-    try {
-      const response = await fetch('/api/users', {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
-      if (response.ok) {
-        const data = await response.json();
-        renderAvailableUsers(data.data, boardId);
-      } else {
-        const responseData = await response.json();
-        alert(responseData.err);
-      }
-    } catch (error) {
-      console.error('오류 발생:', error);
+}
+// 모달창이 뜨며 유저 정보들을 호출하는 함수
+async function openInviteUserModal(boardId) {
+  try {
+    const response = await fetch('/api/users', {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+    if (response.ok) {
+      const data = await response.json();
+      renderAvailableUsers(data.data, boardId);
+    } else {
+      const responseData = await response.json();
+      alert(responseData.err);
     }
-    try {
-      const response = await fetch(`/api/board/${boardId}/user`, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
-      if (response.ok) {
-        const data = await response.json();
-        renderInvitedUsers(data.data, boardId);
-        inviteUserModal.style.display = 'block';
-      } else {
-        const responseData = await response.json();
-        alert(responseData.err);
-      }
-    } catch (error) {
-      console.error('오류 발생:', error);
-    }
+  } catch (error) {
+    console.error('오류 발생:', error);
   }
+  try {
+    const response = await fetch(`/api/board/${boardId}/user`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+    if (response.ok) {
+      const data = await response.json();
+      renderInvitedUsers(data.data, boardId);
+      inviteUserModal.style.display = 'block';
+    } else {
+      const responseData = await response.json();
+      alert(responseData.err);
+    }
+  } catch (error) {
+    console.error('오류 발생:', error);
+  }
+}
 
-  // 모든 사용자 렌더링
-  function renderAvailableUsers(users, boardId) {
-    availableUsersList.innerHTML = ''; // 목록 초기화
-    users.forEach((user) => {
-      const userItem = document.createElement('div');
-      userItem.className = 'user-item';
-      userItem.innerHTML = `
+// 모든 사용자 렌더링
+function renderAvailableUsers(users, boardId) {
+  availableUsersList.innerHTML = ''; // 목록 초기화
+  users.forEach((user) => {
+    const userItem = document.createElement('div');
+    userItem.className = 'user-item';
+    userItem.innerHTML = `
       <span>${user.userName}</span>
       <button class="invite-button" id="${user.id}" onclick="inviteUser(${user.id}, '${user.userName}', ${boardId})">+</button>
     `;
-      availableUsersList.appendChild(userItem);
-    });
-  }
+    availableUsersList.appendChild(userItem);
+  });
+}
 
-  // 추가된 렌더링
-  function renderInvitedUsers(users, boardId) {
-    invitedUsersList.innerHTML = ''; // 목록 초기화
-    users.forEach((user) => {
-      const userItem = document.createElement('div');
-      userItem.className = 'user-item';
-      userItem.innerHTML = `
+// 추가된 렌더링
+function renderInvitedUsers(users, boardId) {
+  invitedUsersList.innerHTML = ''; // 목록 초기화
+  users.forEach((user) => {
+    const userItem = document.createElement('div');
+    userItem.className = 'user-item';
+    userItem.innerHTML = `
       <span>${user.User.userName}</span>
       <button class="invite-button" id="${user.User.id}" onclick="removeInvitedUser(${user.User.id}, '${user.User.userName}', ${boardId})">-</button>
     `;
-      invitedUsersList.appendChild(userItem);
-    });
-  }
+    invitedUsersList.appendChild(userItem);
+  });
+}
 
-  // 모든 사용자에서 + 버튼 누르면 추가되는 함수
-  async function inviteUser(userId, userName, boardId) {
-    try {
-      const response = await fetch(`/api/board/${boardId}/user`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          addUserId: userId,
-        }),
-      });
-      if (response.ok) {
-        const data = await response.json();
-        const invitedUserItem = document.createElement('div');
-        invitedUserItem.className = 'user-item';
-        invitedUserItem.innerHTML = `
+// 모든 사용자에서 + 버튼 누르면 추가되는 함수
+async function inviteUser(userId, userName, boardId) {
+  try {
+    const response = await fetch(`/api/board/${boardId}/user`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        addUserId: userId,
+      }),
+    });
+    if (response.ok) {
+      const data = await response.json();
+      const invitedUserItem = document.createElement('div');
+      invitedUserItem.className = 'user-item';
+      invitedUserItem.innerHTML = `
     <span>${userName}</span>
     <button class="remove-button" id="${userId}" onclick="removeInvitedUser(${userId},'${userName}',${boardId})">-</button>
   `;
-        invitedUsersList.appendChild(invitedUserItem); // 기존의 것을 찾아서 지우기
-        alert(data.message);
-      } else {
-        const data = await response.json();
-        alert(data.err);
-      }
-    } catch (error) {
-      console.error('오류 발생:', error);
+      invitedUsersList.appendChild(invitedUserItem); // 기존의 것을 찾아서 지우기
+      alert(data.message);
+    } else {
+      const data = await response.json();
+      alert(data.err);
     }
+  } catch (error) {
+    console.error('오류 발생:', error);
   }
+}
 
-  // 추가된 사용자에서 - 버튼 누르면 삭제되는 함수
-  async function removeInvitedUser(userId, userName, boardId) {
-    try {
-      const response = await fetch(`/api/board/${boardId}/users`, {
-        method: 'DELETE',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          deleteUserId: userId,
-        }),
-      });
-      if (response.ok) {
-        const data = await response.json();
-        const userToRemove = invitedUsersList.querySelector(`.user-item button[id="${userId}"]`);
-        if (userToRemove) {
-          invitedUsersList.removeChild(userToRemove.parentElement);
-        }
-        alert(data.message);
-      } else {
-        alert(data.err);
+// 추가된 사용자에서 - 버튼 누르면 삭제되는 함수
+async function removeInvitedUser(userId, userName, boardId) {
+  try {
+    const response = await fetch(`/api/board/${boardId}/users`, {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        deleteUserId: userId,
+      }),
+    });
+    if (response.ok) {
+      const data = await response.json();
+      const userToRemove = invitedUsersList.querySelector(`.user-item button[id="${userId}"]`);
+      if (userToRemove) {
+        invitedUsersList.removeChild(userToRemove.parentElement);
       }
-    } catch (error) {
-      console.error('오류 발생:', error);
+      alert(data.message);
+    } else {
+      alert(data.err);
     }
+  } catch (error) {
+    console.error('오류 발생:', error);
   }
-  function closeInviteUserModal() {
-    inviteUserModal.style.display = 'none';
-    availableUsersList.innerHTML = '';
-    invitedUsersList.innerHTML = '';
-  }
+}
+function closeInviteUserModal() {
+  inviteUserModal.style.display = 'none';
+  availableUsersList.innerHTML = '';
+  invitedUsersList.innerHTML = '';
 }
