@@ -22,6 +22,7 @@ document.addEventListener('DOMContentLoaded', async (e) => {
     // fetch로 받아온 data 제이슨화
     const getColumnData = await getColumnResponse.json();
     // 가공한 데이터 location의 내림차순으로 정렬해서 할당
+    if (getColumnData.message) return alert(getColumnData.message);
     const descColumn = getColumnData.data.sort((a, b) => {
       a.location - b.location;
     });
