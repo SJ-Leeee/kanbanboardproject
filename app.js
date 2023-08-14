@@ -33,7 +33,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 // 기본 메인페이지 프론트 연결 확인
 app.get('/', authenticateToken, (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'html', 'main.html'));
+  res.sendFile(path.join(__dirname, 'public', 'html', 'auth.html'));
 });
 
 app.listen(port, () => {
