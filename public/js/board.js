@@ -30,13 +30,13 @@ document.addEventListener('DOMContentLoaded', async () => {
       const data = await response.json();
       if (data.message === '액세스 토큰 오류') {
         alert('로그인이 필요한 기능입니다.');
-        window.location.href = '/';
+        window.location.href = '/html/auth.html';
       } else if (data.message === '리프레시 토큰 만료') {
         alert('로그인이 필요한 기능입니다.');
-        window.location.href = '/';
+        window.location.href = '/html/auth.html';
       } else if (data.message === '리프레시 토큰 오류') {
         alert('로그인이 필요한 기능입니다.');
-        window.location.href = '/';
+        window.location.href = '/html/auth.html';
       }
     }
   } catch (err) {

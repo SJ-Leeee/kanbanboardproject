@@ -21,15 +21,15 @@ document.addEventListener('DOMContentLoaded', async () => {
       const data = await response.json();
       if (data.message === '액세스 토큰 오류') {
         alert('로그인이 필요한 기능입니다.');
-        window.location.href = '/';
+        window.location.href = '/html/auth.html';
       } else if (data.message === '리프레시 토큰 만료') {
         alert('로그인이 필요한 기능입니다.');
-        window.location.href = '/';
+        window.location.href = '/html/auth.html';
       } else if (data.message === '리프레시 토큰 오류') {
         alert('로그인이 필요한 기능입니다.');
-        window.location.href = '/';
+        window.location.href = '/html/auth.html';
       } else if (data.message === '리프레시 토큰이 없습니다.') {
-        window.location.href = '/';
+        window.location.href = '/html/auth.html';
       }
     }
   } catch (error) {
@@ -272,7 +272,7 @@ logout.addEventListener('click', async () => {
     });
     if (response.ok) {
       // alert('로그아웃 되었습니다.');
-      window.location.href = '/';
+      window.location.href = '/html/auth.html';
     } else {
       const data = response.json();
       alert(`로그아웃 실패: ${data.message}`);
