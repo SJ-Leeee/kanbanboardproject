@@ -1,4 +1,4 @@
-# 🧑‍💼Thrillo 프로젝트
+# 🧑‍💼속쓰리조 Thrillo 프로젝트
 
 ## ERD
 
