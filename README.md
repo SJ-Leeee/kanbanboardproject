@@ -2,9 +2,9 @@
 
 ## ERD
 
-![ERD](/img/KIOSK_ERD.png)
+![ERD](/public/img/KanbanBoard.png)
 
-## [시연 영상](https://www.youtube.com/watch?v=phyM0muRtjo)
+## [시연 영상](https://www.youtube.com/watch?v=sZdtcYi0y4A)
 
 ## 역할 분담
 
