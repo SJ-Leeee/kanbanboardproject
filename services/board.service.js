@@ -33,6 +33,9 @@ class BoardService {
 
   updateBoard = async (userId, boardId, boardName, boardDesc, boardColor) => {
     try {
+      const exName = await this.boardRepository.findBoardByName(boardName);
+      // 같은 이름의 보드가 존재하는지 확인
+      if (exName) throw new CustomError('해당 보드가 이미 존재합니다.', 409);
       if (!boardName) throw new CustomError('보드 양식이 올바르지 않습니다.', 412);
       const exBoard = await this.boardRepository.findBoardById(boardId);
       if (!exBoard) throw new CustomError('보드가 존재하지 않습니다.', 403);

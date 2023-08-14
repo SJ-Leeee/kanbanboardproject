@@ -40,7 +40,7 @@ class BoardController {
       return res.status(result.code).json({ message: result.message });
     } catch (err) {
       console.log(err);
-      return res.status(err.status).json({ err: err.message });
+      return res.status(412).json({ err: err.message });
     }
   };
 
